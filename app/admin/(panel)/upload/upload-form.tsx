@@ -6,9 +6,9 @@ import { useMemo, useRef, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "cn";
+import { Segmented, SubjectPicker } from "@/components/admin/choice";
 import { Field } from "@/components/admin/field";
 import { Uploader, type UploadSummary } from "@/components/admin/uploader";
-import { SubjectSwatch } from "@/components/subject-mark";
 import { Button } from "@/components/ui/button";
 import { MATERIAL_CATEGORIES, type MaterialCategory } from "@/lib/enums";
 import { materialCategoryLabel } from "@/lib/labels";
@@ -120,53 +120,25 @@ export function UploadForm({
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div className="space-y-6">
         <Field label="科目" error={errors.subjectId}>
-          <div role="radiogroup" aria-label="科目" className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-3 xl:grid-cols-5">
-            {subjects.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                role="radio"
-                aria-checked={item.id === subjectId}
-                onClick={() => pickSubject(item.id)}
-                className={cn(
-                  "flex h-11 items-center justify-center gap-2 rounded-lg border text-[0.9375rem] transition-colors duration-150",
-                  item.id === subjectId
-                    ? "border-brand bg-brand-tint font-medium text-brand"
-                    : "border-rule-strong bg-surface text-ink hover:border-ink-3",
-                )}
-              >
-                <SubjectSwatch hue={item.hue} />
-                {item.name}
-              </button>
-            ))}
-          </div>
+          <SubjectPicker
+            subjects={subjects}
+            value={subjectId}
+            onChange={pickSubject}
+            className="lg:grid-cols-3 xl:grid-cols-5"
+          />
         </Field>
 
         {subject ? (
           <>
-            <div role="radiogroup" aria-label="上传方式" className="inline-flex rounded-lg bg-secondary p-1">
-              {(
-                [
-                  ["new", "新建资料册"],
-                  ["existing", "追加到已有资料册"],
-                ] as const
-              ).map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={mode === value}
-                  disabled={value === "existing" && subjectSets.length === 0}
-                  onClick={() => setMode(value)}
-                  className={cn(
-                    "h-9 rounded-md px-3.5 text-[0.9375rem] transition-colors duration-150 disabled:opacity-40",
-                    mode === value ? "bg-surface font-medium text-ink shadow-[0_1px_2px_rgba(20,22,26,0.08)]" : "text-ink-2",
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              label="上传方式"
+              value={mode}
+              onChange={setMode}
+              options={[
+                { value: "new", label: "新建资料册" },
+                { value: "existing", label: "追加到已有资料册", disabled: subjectSets.length === 0 },
+              ]}
+            />
 
             {mode === "new" ? (
               <div className="space-y-5">

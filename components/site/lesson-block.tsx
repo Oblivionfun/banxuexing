@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Ban, Check, Clock3 } from "lucide-react";
 import { cn } from "cn";
 import { lessonStatusLabel } from "@/lib/labels";
+import { hasNotes, hasPlan } from "@/lib/lesson";
 import type { LessonWithSubject } from "@/lib/queries";
 import { subjectStyle } from "@/lib/subjects";
 import { formatTimeRange } from "@/lib/time";
@@ -19,14 +20,6 @@ function StatusIcon({ status }: { status: LessonWithSubject["status"] }) {
       return unreachable;
     }
   }
-}
-
-export function hasNotes(lesson: Pick<LessonWithSubject, "summaryMd" | "homework" | "prep">) {
-  return Boolean(lesson.summaryMd || lesson.homework || lesson.prep);
-}
-
-export function hasPlan(lesson: Pick<LessonWithSubject, "planMd" | "planPrep">) {
-  return Boolean(lesson.planMd || lesson.planPrep);
 }
 
 /** 课表格子：学科浅底填满，一节课就是课程表上的一格。 */

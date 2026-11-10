@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/admin/page-header";
 import { SubjectTag } from "@/components/subject-mark";
 import { Button } from "@/components/ui/button";
 import { lessonStatusLabel } from "@/lib/labels";
+import { hasNotes } from "@/lib/lesson";
 import { listLessonsBetween, type LessonWithSubject } from "@/lib/queries";
 import {
   addDays,
@@ -22,10 +23,6 @@ import {
 import { copyWeekAction } from "../../actions";
 
 export const metadata: Metadata = { title: "课程与纪要" };
-
-function hasNotes(lesson: LessonWithSubject) {
-  return Boolean(lesson.summaryMd || lesson.homework || lesson.prep);
-}
 
 function LessonRow({ lesson, today }: { lesson: LessonWithSubject; today: string }) {
   const needsNotes = lesson.status !== "cancelled" && lesson.date <= today && !hasNotes(lesson);

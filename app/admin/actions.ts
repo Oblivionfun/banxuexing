@@ -17,6 +17,7 @@ import {
   students,
   subjects,
 } from "@/lib/db/schema";
+import { fieldErrorsOf } from "@/lib/form";
 import { materialCategoryLabel } from "@/lib/labels";
 import { getLesson, getMaterialSet, getSubjectById, logActivity } from "@/lib/queries";
 import { removeBlob } from "@/lib/storage";
@@ -41,15 +42,6 @@ export type FormState = {
 
 function refreshAll() {
   revalidatePath("/", "layout");
-}
-
-function fieldErrorsOf(error: z.ZodError): Record<string, string> {
-  const result: Record<string, string> = {};
-  for (const issue of error.issues) {
-    const key = String(issue.path[0] ?? "form");
-    result[key] ??= issue.message;
-  }
-  return result;
 }
 
 function text(formData: FormData, key: string): string {

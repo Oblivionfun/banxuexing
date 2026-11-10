@@ -5,11 +5,11 @@ import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
 import { SubjectTag } from "@/components/subject-mark";
 import { FileRows } from "@/components/site/file-rows";
 import { Gallery } from "@/components/site/gallery";
-import { hasNotes, hasPlan } from "@/components/site/lesson-block";
 import { Markdown } from "@/components/site/markdown";
 import { AssignmentList, RedPenHeading } from "@/components/site/red-pen";
 import { WeChatDownloadHint } from "@/components/site/wechat-hint";
 import { lessonSourceLabel, lessonStatusLabel } from "@/lib/labels";
+import { hasNotes, hasPlan } from "@/lib/lesson";
 import { getLesson, listLessonsForSubject } from "@/lib/queries";
 import { formatDateTime, formatMonthDay, formatRelativeDate, formatTimeRange, todayKey } from "@/lib/time";
 

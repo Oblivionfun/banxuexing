@@ -8,6 +8,7 @@ import { AdminFileList } from "@/components/admin/file-list";
 import { PageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { isAiConfigured } from "@/lib/env";
+import { hasNotes } from "@/lib/lesson";
 import { getLesson, listSubjects } from "@/lib/queries";
 import { formatDateTime, formatDateWithWeekday } from "@/lib/time";
 import { deleteLessonAction } from "../../../actions";
@@ -23,7 +24,7 @@ export default async function EditLessonPage({ params, searchParams }: PageProps
   if (!found) notFound();
   const { lesson, files } = found;
   const subjects = listSubjects();
-  const hasNotes = Boolean(lesson.summaryMd || lesson.homework || lesson.prep);
+  const notes = hasNotes(lesson);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default async function EditLessonPage({ params, searchParams }: PageProps
                 家长端效果
               </Link>
             </Button>
-            {hasNotes ? <NotifyButton kind="lesson" id={lesson.id} notifiedAt={lesson.notifiedAt} /> : null}
+            {notes ? <NotifyButton kind="lesson" id={lesson.id} notifiedAt={lesson.notifiedAt} /> : null}
           </>
         }
       />

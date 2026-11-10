@@ -5,8 +5,8 @@ import Link from "next/link";
 import { CircleCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "cn";
+import { Segmented, SubjectPicker, type SegmentOption } from "@/components/admin/choice";
 import { Field } from "@/components/admin/field";
-import { SubjectSwatch } from "@/components/subject-mark";
 import { Button } from "@/components/ui/button";
 import { suggestLesson, type GroupMessageKind, type LessonCandidate } from "@/lib/group-message";
 import { lessonStatusLabel } from "@/lib/labels";
@@ -15,9 +15,9 @@ import { analyzeGroupMessageAction, applyGroupMessageAction, lessonCandidatesAct
 
 type SubjectOption = { id: number; name: string; hue: number; teacherName: string; lessonMinutes: number };
 
-const KINDS: ReadonlyArray<readonly [GroupMessageKind, string]> = [
-  ["plan", "课前计划"],
-  ["notes", "课后纪要"],
+const KINDS: ReadonlyArray<SegmentOption<GroupMessageKind>> = [
+  { value: "plan", label: "课前计划" },
+  { value: "notes", label: "课后纪要" },
 ];
 
 type Draft = {
@@ -214,52 +214,20 @@ export function ImportFlow({
       {draft ? (
         <section aria-label="确认识别结果" className="space-y-6">
           <Field label="这是" error={draft.kind ? undefined : "看不出是课前还是课后发的，请选一下"}>
-            <div role="radiogroup" aria-label="消息类型" className="inline-flex rounded-lg bg-secondary p-1">
-              {KINDS.map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={draft.kind === value}
-                  onClick={() => {
-                    const next = { ...draft, kind: value };
-                    setDraft(next);
-                    reloadLessons(next);
-                  }}
-                  className={cn(
-                    "h-9 rounded-md px-4 text-[0.9375rem] transition-colors duration-150",
-                    draft.kind === value
-                      ? "bg-surface font-medium text-ink shadow-[0_1px_2px_rgba(20,22,26,0.08)]"
-                      : "text-ink-2",
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              label="消息类型"
+              value={draft.kind}
+              options={KINDS}
+              onChange={(kind) => {
+                const next = { ...draft, kind };
+                setDraft(next);
+                reloadLessons(next);
+              }}
+            />
           </Field>
 
           <Field label="科目" error={errors.subjectId ?? (draft.subjectId ? undefined : "没认出是哪科，请选一下")}>
-            <div role="radiogroup" aria-label="科目" className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-              {subjects.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={item.id === draft.subjectId}
-                  onClick={() => changeSubject(item.id)}
-                  className={cn(
-                    "flex h-11 items-center justify-center gap-2 rounded-lg border text-[0.9375rem] transition-colors duration-150",
-                    item.id === draft.subjectId
-                      ? "border-brand bg-brand-tint font-medium text-brand"
-                      : "border-rule-strong bg-surface text-ink hover:border-ink-3",
-                  )}
-                >
-                  <SubjectSwatch hue={item.hue} />
-                  {item.name}
-                </button>
-              ))}
-            </div>
+            <SubjectPicker subjects={subjects} value={draft.subjectId} onChange={changeSubject} />
           </Field>
 
           <Field label="日期" htmlFor="date" error={errors.date} className="max-w-56">

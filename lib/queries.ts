@@ -163,14 +163,24 @@ export function listAllLessons(limit = 300): LessonWithSubject[] {
   return lessonRows(and(isNull(lessons.deletedAt)), "desc").slice(0, limit);
 }
 
-const hasNotes = or(
+const notesWritten = or(
   ne(lessons.summaryMd, ""),
   ne(lessons.homework, ""),
   ne(lessons.prep, ""),
 );
 
+/** 按顺序每个科目只留第一条。 */
+function firstPerSubject<T extends { subjectId: number }>(rows: T[]): T[] {
+  const seen = new Set<number>();
+  return rows.filter((row) => {
+    if (seen.has(row.subjectId)) return false;
+    seen.add(row.subjectId);
+    return true;
+  });
+}
+
 export function listRecentNotes(limit = 6): LessonWithSubject[] {
-  return lessonRows(and(isNull(lessons.deletedAt), eq(lessons.status, "done"), hasNotes), "desc").slice(
+  return lessonRows(and(isNull(lessons.deletedAt), eq(lessons.status, "done"), notesWritten), "desc").slice(
     0,
     limit,
   );
@@ -178,40 +188,32 @@ export function listRecentNotes(limit = 6): LessonWithSubject[] {
 
 /** 最近两周每个科目最新一次的作业和下节准备。 */
 export function listRecentAssignments(today: string, days = 14): LessonWithSubject[] {
-  const rows = lessonRows(
-    and(
-      isNull(lessons.deletedAt),
-      eq(lessons.status, "done"),
-      gte(lessons.date, addDays(today, -days)),
-      or(ne(lessons.homework, ""), ne(lessons.prep, "")),
+  return firstPerSubject(
+    lessonRows(
+      and(
+        isNull(lessons.deletedAt),
+        eq(lessons.status, "done"),
+        gte(lessons.date, addDays(today, -days)),
+        or(ne(lessons.homework, ""), ne(lessons.prep, "")),
+      ),
+      "desc",
     ),
-    "desc",
   );
-  const seen = new Set<number>();
-  return rows.filter((row) => {
-    if (seen.has(row.subjectId)) return false;
-    seen.add(row.subjectId);
-    return true;
-  });
 }
 
 /** 接下来一周每个科目最近一节有"课前准备"的课。 */
 export function listUpcomingPlanPrep(today: string, days = 7): LessonWithSubject[] {
-  const rows = lessonRows(
-    and(
-      isNull(lessons.deletedAt),
-      eq(lessons.status, "planned"),
-      gte(lessons.date, today),
-      lte(lessons.date, addDays(today, days)),
-      ne(lessons.planPrep, ""),
+  return firstPerSubject(
+    lessonRows(
+      and(
+        isNull(lessons.deletedAt),
+        eq(lessons.status, "planned"),
+        gte(lessons.date, today),
+        lte(lessons.date, addDays(today, days)),
+        ne(lessons.planPrep, ""),
+      ),
     ),
   );
-  const seen = new Set<number>();
-  return rows.filter((row) => {
-    if (seen.has(row.subjectId)) return false;
-    seen.add(row.subjectId);
-    return true;
-  });
 }
 
 export function getLesson(

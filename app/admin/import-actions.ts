@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/auth";
 import { STUDENT_ID, getDb } from "@/lib/db";
 import { lessons, subjects } from "@/lib/db/schema";
 import { isAiConfigured } from "@/lib/env";
+import { fieldErrorsOf } from "@/lib/form";
 import {
   parseGroupMessage,
   suggestLesson,
@@ -15,6 +16,7 @@ import {
   type LessonCandidate,
   type ParsedGroupMessage,
 } from "@/lib/group-message";
+import { hasNotes, hasPlan } from "@/lib/lesson";
 import { getLesson, getSubjectById, listLessonsAround, listSubjects, logActivity } from "@/lib/queries";
 import { formatMonthDay, isDateString, isTimeString, todayKey, toMinutes } from "@/lib/time";
 
@@ -37,8 +39,8 @@ function lessonCandidates(subjectId: number, date: string): LessonCandidate[] {
     endTime: lesson.endTime,
     status: lesson.status,
     topic: lesson.topic,
-    hasPlan: Boolean(lesson.planMd || lesson.planPrep),
-    hasNotes: Boolean(lesson.summaryMd || lesson.homework || lesson.prep),
+    hasPlan: hasPlan(lesson),
+    hasNotes: hasNotes(lesson),
   }));
 }
 
@@ -134,9 +136,7 @@ export async function applyGroupMessageAction(input: ApplyInput): Promise<ApplyR
   await requireAdmin();
   const parsed = applySchema.safeParse(input);
   if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {};
-    for (const issue of parsed.error.issues) fieldErrors[String(issue.path[0] ?? "form")] ??= issue.message;
-    return { ok: false, error: "有几项需要修改，请看标红的地方。", fieldErrors };
+    return { ok: false, error: "有几项需要修改，请看标红的地方。", fieldErrors: fieldErrorsOf(parsed.error) };
   }
   const data = parsed.data;
   const subject = getSubjectById(data.subjectId);

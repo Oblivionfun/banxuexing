@@ -5,8 +5,8 @@ import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "cn";
 import { SubmitButton } from "@/components/admin/buttons";
+import { Segmented, SubjectPicker } from "@/components/admin/choice";
 import { Field } from "@/components/admin/field";
-import { SubjectSwatch } from "@/components/subject-mark";
 import { Button } from "@/components/ui/button";
 import { LESSON_SOURCES, LESSON_STATUSES, type LessonSource, type LessonStatus } from "@/lib/enums";
 import { lessonSourceLabel, lessonStatusLabel } from "@/lib/labels";
@@ -105,26 +105,7 @@ export function LessonForm({
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="space-y-6">
           <Field label="科目" error={errors.subjectId}>
-            <div role="radiogroup" aria-label="科目" className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-3">
-              {subjects.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={item.id === subjectId}
-                  onClick={() => setSubjectId(item.id)}
-                  className={cn(
-                    "flex h-11 items-center justify-center gap-2 rounded-lg border text-[0.9375rem] transition-colors duration-150",
-                    item.id === subjectId
-                      ? "border-brand bg-brand-tint font-medium text-brand"
-                      : "border-rule-strong bg-surface text-ink hover:border-ink-3",
-                  )}
-                >
-                  <SubjectSwatch hue={item.hue} />
-                  {item.name}
-                </button>
-              ))}
-            </div>
+            <SubjectPicker subjects={subjects} value={subjectId} onChange={setSubjectId} className="lg:grid-cols-3" />
           </Field>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -169,25 +150,12 @@ export function LessonForm({
           </div>
 
           <Field label="状态">
-            <div role="radiogroup" aria-label="状态" className="inline-flex rounded-lg bg-secondary p-1">
-              {LESSON_STATUSES.map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={status === value}
-                  onClick={() => setStatus(value)}
-                  className={cn(
-                    "h-9 rounded-md px-4 text-[0.9375rem] transition-colors duration-150",
-                    status === value
-                      ? "bg-surface font-medium text-ink shadow-[0_1px_2px_rgba(20,22,26,0.08)]"
-                      : "text-ink-2",
-                  )}
-                >
-                  {lessonStatusLabel(value)}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              label="状态"
+              value={status}
+              onChange={setStatus}
+              options={LESSON_STATUSES.map((value) => ({ value, label: lessonStatusLabel(value) }))}
+            />
           </Field>
 
           <Field label="主题（可选）" htmlFor="topic" hint="一句话说明这节课讲什么，例如：一元一次方程" error={errors.topic}>

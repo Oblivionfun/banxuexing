@@ -20,7 +20,7 @@ ssh "$host" bash -s -- "$dir" <<'REMOTE'
 set -euo pipefail
 cd "$1"
 if [[ ! -f .env ]]; then
-  echo "服务器上还没有 .env：请先 cp .env.example .env 并填写（见 部署说明.md）" >&2
+  echo "服务器上还没有 .env：请先 cp .env.example .env 并填写（见 docs/部署说明.md）" >&2
   exit 1
 fi
 mkdir -p data

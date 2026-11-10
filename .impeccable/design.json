@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T12:00:00+08:00",
+  "title": "Design System: 伴学星",
+  "extensions": {
+    "colorMeta": {
+      "brand": {
+        "role": "primary",
+        "displayName": "墨蓝品牌",
+        "canonical": "oklch(42% 0.14 265)",
+        "tonalRamp": [
+          "oklch(18% 0.08 265)",
+          "oklch(25% 0.10 265)",
+          "oklch(32% 0.12 265)",
+          "oklch(38% 0.13 265)",
+          "oklch(42% 0.14 265)",
+          "oklch(55% 0.12 265)",
+          "oklch(72% 0.08 265)",
+          "oklch(92% 0.03 265)"
+        ]
+      },
+      "mark": {
+        "role": "secondary",
+        "displayName": "批改红",
+        "canonical": "oklch(52% 0.18 25)",
+        "tonalRamp": [
+          "oklch(22% 0.10 25)",
+          "oklch(32% 0.14 25)",
+          "oklch(42% 0.16 25)",
+          "oklch(48% 0.17 25)",
+          "oklch(52% 0.18 25)",
+          "oklch(62% 0.14 25)",
+          "oklch(78% 0.08 25)",
+          "oklch(94% 0.03 25)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "冷纸",
+        "canonical": "oklch(96.5% 0.01 250)",
+        "tonalRamp": [
+          "oklch(22% 0.02 250)",
+          "oklch(35% 0.02 250)",
+          "oklch(48% 0.02 250)",
+          "oklch(58% 0.02 250)",
+          "oklch(68% 0.015 250)",
+          "oklch(82% 0.012 250)",
+          "oklch(92% 0.01 250)",
+          "oklch(98% 0.005 250)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "正文墨",
+        "canonical": "oklch(18% 0.01 260)",
+        "tonalRamp": [
+          "oklch(12% 0.01 260)",
+          "oklch(18% 0.01 260)",
+          "oklch(28% 0.015 260)",
+          "oklch(38% 0.015 260)",
+          "oklch(48% 0.012 260)",
+          "oklch(62% 0.01 260)",
+          "oklch(78% 0.008 260)",
+          "oklch(94% 0.005 260)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "页面主标题",
+        "purpose": "学生档案名、科目页 h1；响应式 1.75rem–2.0625rem。"
+      },
+      "body": {
+        "displayName": "正文",
+        "purpose": "全局 16px / 1.65；纪要 prose-note 1.75 行高。"
+      },
+      "label": {
+        "displayName": "标签与导航",
+        "purpose": "表单标签、顶栏导航、日期条辅助字。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "field-focus-ring",
+        "value": "0 0 0 3px var(--brand-tint)",
+        "purpose": "field 控件聚焦外发光，非卡片投影。"
+      },
+      {
+        "name": "admin-segment-pressed",
+        "value": "0 1px 2px rgba(20, 22, 26, 0.08)",
+        "purpose": "管理端分段选中态轻微抬起，局部特例。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "transition-ui",
+        "value": "150ms ease-out",
+        "purpose": "按钮、边框、颜色状态默认过渡。"
+      },
+      {
+        "name": "redpen-draw",
+        "value": "650ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "红笔 SVG 路径首次绘制；redpen-stroke-late 380ms、延迟 650ms。"
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ],
+    "subjectUtilities": {
+      "hues": [25, 55, 90, 130, 170, 205, 245, 295, 340],
+      "tint": "oklch(0.955 0.03 var(--h, 250))",
+      "tintStrong": "oklch(0.91 0.05 var(--h, 250))",
+      "ink": "oklch(0.42 0.08 var(--h, 250))",
+      "swatch": "oklch(0.62 0.11 var(--h, 250))",
+      "border": "oklch(0.86 0.05 var(--h, 250))"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-default",
+      "description": "主操作：墨蓝实心，44px 高。",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">保存</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 2.75rem; padding: 0 1rem; border: 1px solid transparent; border-radius: 8px; background: var(--brand, #2340a8); color: #fff; font-family: \"MiSans VF\", \"PingFang SC\", system-ui, sans-serif; font-size: 1rem; font-weight: 500; letter-spacing: 0.01em; cursor: pointer; transition: background-color 150ms ease-out; } .ds-btn-primary:hover { background: var(--brand-hover, #1b3289); } .ds-btn-primary:focus-visible { outline: 2px solid var(--brand, #2340a8); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "次要操作：白底描边。",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">取消</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 2.75rem; padding: 0 1rem; border: 1px solid var(--rule-strong, #cfd4dc); border-radius: 8px; background: var(--surface, #ffffff); color: var(--ink, #14161a); font-family: \"MiSans VF\", system-ui, sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background-color 150ms ease-out, border-color 150ms ease-out; } .ds-btn-outline:hover { background: var(--paper, #f4f6f9); border-color: var(--ink-3, #6b7280); } .ds-btn-outline:focus-visible { outline: 2px solid var(--brand, #2340a8); outline-offset: 2px; }"
+    },
+    {
+      "name": "Mark Button",
+      "kind": "button",
+      "refersTo": "button-mark",
+      "description": "与老师话术相关的浅红底按钮。",
+      "html": "<button class=\"ds-btn-mark\" type=\"button\">编辑布置</button>",
+      "css": ".ds-btn-mark { display: inline-flex; align-items: center; justify-content: center; height: 2.75rem; padding: 0 1rem; border: 1px solid transparent; border-radius: 8px; background: var(--mark-tint, #fcefed); color: var(--mark, #d2402f); font-family: \"MiSans VF\", system-ui, sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background-color 150ms ease-out; } .ds-btn-mark:hover { background: #f9dfdb; } .ds-btn-mark:focus-visible { outline: 2px solid var(--brand, #2340a8); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field-default",
+      "description": "管理端与表单标准输入，16px 字号。",
+      "html": "<input class=\"ds-field\" type=\"text\" placeholder=\"请输入\" />",
+      "css": ".ds-field { display: block; width: 100%; min-height: 2.75rem; padding: 0.5rem 0.75rem; border: 1px solid var(--rule-strong, #cfd4dc); border-radius: 8px; background: var(--surface, #ffffff); color: var(--ink, #14161a); font-family: \"MiSans VF\", system-ui, sans-serif; font-size: 1rem; line-height: 1.5; transition: border-color 150ms ease-out, box-shadow 150ms ease-out; } .ds-field::placeholder { color: var(--ink-3, #6b7280); } .ds-field:hover { border-color: var(--ink-3, #6b7280); } .ds-field:focus { outline: none; border-color: var(--brand, #2340a8); box-shadow: 0 0 0 3px var(--brand-tint, #e8edfa); }"
+    },
+    {
+      "name": "Brand Bar",
+      "kind": "nav",
+      "description": "粘性墨蓝顶栏与字标。",
+      "html": "<header class=\"ds-brand-bar\"><a class=\"ds-wordmark\" href=\"/\">伴学星</a></header>",
+      "css": ".ds-brand-bar { position: sticky; top: 0; z-index: 30; background: var(--brand, #2340a8); color: #fff; } .ds-brand-bar { display: flex; align-items: center; height: 3.5rem; padding: 0 1rem; max-width: 80rem; margin: 0 auto; } .ds-wordmark { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.0625rem; font-weight: 600; letter-spacing: 0.06em; color: #fff; text-decoration: none; }"
+    },
+    {
+      "name": "Site Nav Link",
+      "kind": "nav",
+      "description": "顶栏白字导航，当前页半透明白底。",
+      "html": "<nav class=\"ds-site-nav\"><a class=\"ds-site-nav-link is-active\" href=\"/\">本周</a><a class=\"ds-site-nav-link\" href=\"/schedule\">课表</a></nav>",
+      "css": ".ds-site-nav { display: flex; gap: 0.125rem; margin-left: auto; } .ds-site-nav-link { display: inline-flex; align-items: center; height: 2.25rem; padding: 0 0.75rem; border-radius: 6px; font-size: 0.9375rem; color: rgba(255,255,255,0.8); text-decoration: none; transition: background-color 150ms ease-out, color 150ms ease-out; } .ds-site-nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; } .ds-site-nav-link.is-active { background: rgba(255,255,255,0.15); font-weight: 500; color: #fff; }"
+    },
+    {
+      "name": "Lesson Block",
+      "kind": "card",
+      "description": "课表格子：学科浅底填满。",
+      "html": "<a class=\"ds-lesson-block\" style=\"--h: 245\" href=\"#\"><span class=\"ds-lesson-time\">09:00</span><span class=\"ds-lesson-subject\">数学</span></a>",
+      "css": ".ds-lesson-block { display: block; padding: 0.5rem 0.625rem; border-radius: 6px; background: oklch(0.955 0.03 var(--h, 250)); text-decoration: none; transition: filter 150ms ease-out; } .ds-lesson-block:hover { filter: brightness(0.97); } .ds-lesson-time { font-size: 0.875rem; font-weight: 500; font-variant-numeric: tabular-nums; color: oklch(0.42 0.08 var(--h, 250)); } .ds-lesson-subject { display: block; margin-top: 0.125rem; font-size: 0.9375rem; font-weight: 600; color: var(--ink, #14161a); }"
+    },
+    {
+      "name": "Subject Tag",
+      "kind": "chip",
+      "description": "科目标签：浅底 + 色块 + 学科墨色字。",
+      "html": "<span class=\"ds-subject-tag\" style=\"--h: 130\"><span class=\"ds-subject-swatch\"></span>生物</span>",
+      "css": ".ds-subject-tag { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.125rem 0.5rem; border-radius: 6px; background: oklch(0.955 0.03 var(--h, 250)); color: oklch(0.42 0.08 var(--h, 250)); font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em; } .ds-subject-swatch { width: 0.625rem; height: 0.625rem; border-radius: 3px; background: oklch(0.62 0.11 var(--h, 250)); }"
+    },
+    {
+      "name": "Red Pen Heading",
+      "kind": "custom",
+      "description": "老师布置区标题：红字 + SVG 下划线与勾。",
+      "html": "<h2 class=\"ds-redpen-heading\">老师最近布置<svg class=\"ds-redpen-ul\" viewBox=\"0 0 200 14\" preserveAspectRatio=\"none\" aria-hidden><path d=\"M3 9 C 38 4, 74 12, 112 7 S 172 5, 197 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\"/></svg></h2>",
+      "css": ".ds-redpen-heading { display: inline-flex; align-items: flex-end; gap: 0.375rem; font-size: 1.1875rem; font-weight: 600; color: var(--mark, #d2402f); position: relative; } .ds-redpen-ul { position: absolute; left: -4%; bottom: -0.45em; width: 108%; height: 0.55em; color: var(--mark, #d2402f); pointer-events: none; }"
+    },
+    {
+      "name": "Admin Nav Tab",
+      "kind": "nav",
+      "description": "管理端下划线 Tab，活跃项墨蓝字 + 底条。",
+      "html": "<a class=\"ds-admin-tab is-active\" href=\"/admin\">概览</a>",
+      "css": ".ds-admin-tab { position: relative; display: inline-block; padding: 0.875rem 0.75rem; font-size: 0.9375rem; color: var(--ink-2, #4a505a); text-decoration: none; white-space: nowrap; transition: color 150ms ease-out; } .ds-admin-tab:hover { color: var(--ink, #14161a); } .ds-admin-tab.is-active { font-weight: 500; color: var(--brand, #2340a8); } .ds-admin-tab.is-active::after { content: \"\"; position: absolute; left: 0.75rem; right: 0.75rem; bottom: 0; height: 2px; border-radius: 9999px; background: var(--brand, #2340a8); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "被老师批改过的作业本",
+    "overview": "学习档案不是后台仪表盘，也不是满屏卡片的资料站。界面用课程表的列节奏组织时间：家长先看到今天与本周的课，再看到红笔圈出的「老师布置」，最后按科目翻资料与纪要。外壳是墨蓝顶栏（brand），纸面是冷灰方格底（paper-grid）托住纯白内容区（surface），格线与横线（rule / notebook-line）替代阴影分层。",
+    "keyCharacteristics": [
+      "墨蓝顶栏 + 冷纸方格背景 + 1px 格线，不用卡片堆叠与投影景深",
+      "九科 OKLCH 学科色只用于课表格子与科目标记",
+      "批改红专属老师布置、红笔标题与作业本区标签",
+      "触控与主按钮高度 44px，表单 field 固定 16px 字号",
+      "桌面 lg 起七列周课表；手机七天日期条 + 当日课列表"
+    ],
+    "rules": [
+      {
+        "name": "The Red Pen Only Rule",
+        "body": "--mark 只出现在老师布置、红笔批注组件与 mark 按钮变体；课表、导航、资料列表不得用批改红做装饰。",
+        "section": "colors"
+      },
+      {
+        "name": "The Subject Hue Rule",
+        "body": "学科色只能通过 subjectStyle(hue) 与 subj-* 出现在课格子、科目标签、科目页头；全站 chrome 保持墨蓝 + 中性墨。",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Time Rule",
+        "body": "课表时间、日期数字、有序列表序号使用 tabular（font-variant-numeric: tabular-nums），保证列对齐。",
+        "section": "typography"
+      },
+      {
+        "name": "The Sixteen Pixel Field Rule",
+        "body": "所有 field 与主按钮默认字号为 16px（text-base），避免 iOS 微信内聚焦放大。",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Timetable Rule",
+        "body": "课表与资料列表用边框与背景色分层，禁止默认卡片阴影与彩色左边边框装饰条。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do 用 WeekGrid / WeekStrip + LessonBlock 组织时间，而不是卡片墙。",
+      "Do 在学科相关 UI 上传入 hue 并使用 subj-tint / subj-ink，保持 OKLCH 配方一致。",
+      "Do 老师布置与强调使用 RedPenHeading、AssignmentList 或 mark 按钮变体。",
+      "Do 保持触控目标 ≥44px（h-11、min-h-11 min-w-11 日期格）。",
+      "Do 状态过渡约 duration-150，并保留 prefers-reduced-motion 降级。"
+    ],
+    "donts": [
+      "Don't 用批改红装饰导航、课表格线或非老师话术内容。",
+      "Don't 堆叠阴影卡片、彩色左边框、emoji 眉标或全大写标签（与方向约束一致）。",
+      "Don't 用学科色粉刷顶栏、正文或全站按钮（学科色仅识别用途）。",
+      "Don't 在表单控件使用小于 16px 的字号（避免移动端缩放）。"
+    ]
+  }
+}

@@ -26,10 +26,12 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // 自托管用 standalone（Docker）；Vercel 有自己的构建输出
   output: process.env.VERCEL ? undefined : "standalone",
-  serverExternalPackages: ["better-sqlite3", "sharp"],
+  // file-type 运行时会动态 import("strtok3")，打进 bundle 后依赖追踪不到；作为外部包才会被完整带上
+  serverExternalPackages: ["better-sqlite3", "sharp", "file-type"],
   // 运行时数据目录不能被打进构建产物
   outputFileTracingExcludes: { "*": ["./data/**", "./e2e/**", "./tests/**", "./scripts/**"] },
-  outputFileTracingIncludes: { "*": ["./drizzle/**", "./demo/**"] },
+  // strtok3 的 Node 入口（lib/index.js 等）只通过 file-type 的动态 import 加载，追踪不到，需手动带上
+  outputFileTracingIncludes: { "*": ["./drizzle/**", "./demo/**", "./node_modules/strtok3/**"] },
   poweredByHeader: false,
   images: { unoptimized: true },
   experimental: {

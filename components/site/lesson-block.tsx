@@ -57,7 +57,7 @@ export function LessonBlock({
         </span>
         <span className="mt-0.5 block truncate text-[0.9375rem] font-semibold text-ink">{lesson.subject.name}</span>
         {lesson.subject.teacherName ? (
-          <span className="block truncate text-xs text-ink-2">{lesson.subject.teacherName}</span>
+          <span className="block truncate text-sm text-ink-2">{lesson.subject.teacherName}</span>
         ) : null}
       </Link>
     );
@@ -94,7 +94,7 @@ export function LessonBlock({
           <span className="truncate text-sm text-ink-2">{lesson.subject.teacherName}</span>
         ) : null}
       </div>
-      {lesson.topic ? <p className="mt-0.5 truncate text-[0.9375rem] text-ink-2">{lesson.topic}</p> : null}
+      {lesson.topic ? <p className="mt-0.5 truncate text-base text-ink-2">{lesson.topic}</p> : null}
       {notes ? (
         <p className="mt-1.5 text-sm font-medium subj-ink">看纪要</p>
       ) : null}

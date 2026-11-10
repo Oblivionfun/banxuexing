@@ -11,6 +11,7 @@ import {
   listRecentAssignments,
   listRecentNotes,
   listSubjectsWithStats,
+  type SubjectWithStats,
 } from "@/lib/queries";
 import {
   addDays,
@@ -124,6 +125,9 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
             )}
           </section>
 
+          {/* 手机上科目排在纪要前面；宽屏时科目在左栏 */}
+          <SubjectsSection subjects={subjects} idSuffix="narrow" className="lg:hidden" />
+
           <section aria-labelledby="notes-heading">
             <h2 id="notes-heading" className="text-lg font-semibold text-ink">
               最近课程纪要
@@ -138,38 +142,51 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
           </section>
         </aside>
 
-        <section aria-labelledby="subjects-heading" className="xl:col-start-1 xl:row-start-2 xl:self-start">
-          <h2 id="subjects-heading" className="text-lg font-semibold text-ink">
-            科目
-          </h2>
-          <ul className="mt-3 grid border-t border-rule sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3">
-            {subjects.map((subject) => (
-              <li key={subject.id} className="border-b border-rule">
-                <Link
-                  href={`/subjects/${subject.slug}`}
-                  className="group flex items-center gap-3 py-3.5"
-                >
-                  <SubjectSwatch hue={subject.hue} className="size-3" />
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-baseline gap-2">
-                      <span className="font-semibold text-ink">{subject.name}</span>
-                      <span className="truncate text-sm text-ink-2">
-                        {subject.teacherName || "老师待定"}
-                      </span>
-                    </span>
-                    <span className="mt-0.5 block text-sm text-ink-3">
-                      {subject.materialCount > 0 ? `资料 ${subject.materialCount} 册` : "暂无资料"}
-                      {subject.nextLessonDate ? `，下节 ${formatMonthDay(subject.nextLessonDate)}` : ""}
-                    </span>
-                  </span>
-                  <ChevronRight className="size-4 text-ink-3 transition-transform duration-150 group-hover:translate-x-0.5" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <SubjectsSection
+          subjects={subjects}
+          idSuffix="wide"
+          className="hidden lg:block xl:col-start-1 xl:row-start-2 xl:self-start"
+        />
       </div>
-
     </>
+  );
+}
+
+function SubjectsSection({
+  subjects,
+  idSuffix,
+  className,
+}: {
+  subjects: SubjectWithStats[];
+  idSuffix: string;
+  className?: string;
+}) {
+  const headingId = `subjects-heading-${idSuffix}`;
+  return (
+    <section aria-labelledby={headingId} className={className}>
+      <h2 id={headingId} className="text-lg font-semibold text-ink">
+        科目
+      </h2>
+      <ul className="mt-3 grid border-t border-rule sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3">
+        {subjects.map((subject) => (
+          <li key={subject.id} className="border-b border-rule">
+            <Link href={`/subjects/${subject.slug}`} className="group flex items-center gap-3 py-3.5">
+              <SubjectSwatch hue={subject.hue} className="size-3" />
+              <span className="min-w-0 flex-1">
+                <span className="flex items-baseline gap-2">
+                  <span className="font-semibold text-ink">{subject.name}</span>
+                  <span className="truncate text-sm text-ink-2">{subject.teacherName || "老师待定"}</span>
+                </span>
+                <span className="mt-0.5 block text-sm text-ink-3">
+                  {subject.materialCount > 0 ? `资料 ${subject.materialCount} 册` : "暂无资料"}
+                  {subject.nextLessonDate ? `，下节 ${formatMonthDay(subject.nextLessonDate)}` : ""}
+                </span>
+              </span>
+              <ChevronRight className="size-4 text-ink-3 transition-transform duration-150 group-hover:translate-x-0.5" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

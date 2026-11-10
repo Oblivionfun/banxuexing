@@ -42,7 +42,7 @@ export function NotesTimeline({
                 {lesson.topic ? <span className="font-medium text-ink">{lesson.topic}</span> : null}
               </span>
               {lesson.summaryMd ? (
-                <span className="mt-1.5 line-clamp-3 block text-[0.9375rem] leading-relaxed text-ink-2">
+                <span className="mt-1.5 line-clamp-3 block text-base leading-relaxed text-ink-2">
                   {plainExcerpt(lesson.summaryMd, excerptLength)}
                 </span>
               ) : null}

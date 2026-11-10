@@ -33,7 +33,7 @@ export function WeekStrip({
               scroll={false}
               aria-current={isSelected ? "date" : undefined}
               aria-label={`${formatDateWithWeekday(day)}，${ofDay.length} 节课`}
-              className="flex flex-col items-center gap-1 rounded-lg py-1.5 transition-colors duration-150 hover:bg-paper"
+              className="flex min-h-11 min-w-11 flex-col items-center gap-1 rounded-lg py-1.5 transition-colors duration-150 hover:bg-paper"
             >
               <span className={cn("text-xs", isToday ? "font-medium text-brand" : "text-ink-3")}>
                 {weekdayShort(day)}

@@ -86,6 +86,7 @@
   --mark: #d2402f;
   --mark-tint: #fcefed;
   --notebook-line: #dfe5f1;
+  --paper-grid: #e9edf4;
   --success: #1f7a4d;
   --success-tint: #e8f4ee;
   --warning: #9a5b06;
@@ -143,6 +144,16 @@
   background-position: 0 0.25rem;
 }
 
+/* 家长端纸面：极淡的方格纸，内容面仍是纯白 */
+@utility paper-grid {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(to right, var(--paper-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
+}
+
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
@@ -187,6 +198,10 @@
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
   animation: redpen-draw 650ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+.redpen-stroke-late {
+  animation-delay: 650ms;
+  animation-duration: 380ms;
 }
 @keyframes redpen-draw {
   from {

@@ -30,6 +30,24 @@ export function RedPenUnderline({ className, seed = 0 }: { className?: string; s
   );
 }
 
+/** 老师批改时打的红勾，和下划线一起画出。 */
+export function RedPenTick({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 20" aria-hidden className={cn("pointer-events-none inline-block text-mark", className)}>
+      <path
+        d="M3 11.5 C 5 13, 7 15.5, 8.6 17.2 C 11.5 11.5, 16 6, 21.5 2.6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        pathLength={1}
+        className="redpen-stroke redpen-stroke-late"
+      />
+    </svg>
+  );
+}
+
 export function RedPenHeading({
   children,
   as: Tag = "h2",
@@ -40,11 +58,12 @@ export function RedPenHeading({
   className?: string;
 }) {
   return (
-    <Tag className={cn("inline-block text-lg font-semibold text-mark", className)}>
+    <Tag className={cn("inline-flex items-end gap-1.5 text-lg font-semibold text-mark", className)}>
       <span className="relative inline-block">
         {children}
         <RedPenUnderline className="absolute -bottom-[0.45em] left-[-4%] w-[108%]" />
       </span>
+      <RedPenTick className="mb-1 size-[1.05em]" />
     </Tag>
   );
 }
@@ -66,7 +85,7 @@ export function AssignmentList({
   if (groups.length === 0) return null;
 
   return (
-    <dl className={cn("notebook text-[0.9375rem] leading-8", className)}>
+    <dl className={cn("notebook text-base leading-8", className)}>
       {groups.map((group) => (
         <div key={group.label} className="grid grid-cols-[4.5rem_1fr] gap-x-2">
           <dt className="font-medium text-mark">{group.label}</dt>

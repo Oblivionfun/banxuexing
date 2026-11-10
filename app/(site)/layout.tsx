@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-dvh">
+    <div className="paper-grid min-h-dvh">
       <BrandBar>
         <SiteNav />
       </BrandBar>

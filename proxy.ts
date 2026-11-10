@@ -42,6 +42,6 @@ export function proxy(request: NextRequest) {
 // /api/upload 不经过 proxy：经过 proxy 的请求体会被缓冲并在 10MB 处截断，上传接口自行校验口令。
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icon.svg|robots.txt|s/|denied|api/health|api/upload).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon.svg|icon|robots.txt|s/|denied|api/health|api/upload).*)",
   ],
 };

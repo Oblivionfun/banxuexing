@@ -66,6 +66,8 @@ export default async function EditLessonPage({ params, searchParams }: PageProps
           summaryMd: lesson.summaryMd,
           homework: lesson.homework,
           prep: lesson.prep,
+          planMd: lesson.planMd,
+          planPrep: lesson.planPrep,
           recordingUrl: lesson.recordingUrl,
           source: lesson.source,
         }}

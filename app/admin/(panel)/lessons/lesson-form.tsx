@@ -24,6 +24,8 @@ export type LessonFormValues = {
   summaryMd: string;
   homework: string;
   prep: string;
+  planMd: string;
+  planPrep: string;
   recordingUrl: string;
   source: LessonSource;
 };
@@ -225,6 +227,21 @@ export function LessonForm({
                 placeholder="https://meeting.tencent.com/…"
                 className="field"
               />
+            </Field>
+          </div>
+
+          <div className="space-y-4 border-t border-rule pt-6">
+            <div>
+              <h2 className="font-semibold text-ink">课前计划</h2>
+              <p className="mt-0.5 text-sm text-ink-3">
+                老师上课前发的安排。也可以在“导入群消息”里粘贴老师原文，自动填到这里。
+              </p>
+            </div>
+            <Field label="计划内容" htmlFor="planMd" hint="讲什么、时间怎么安排、用哪些资料" error={errors.planMd}>
+              <textarea id="planMd" name="planMd" defaultValue={initial.planMd} className="field min-h-32" />
+            </Field>
+            <Field label="课前准备" htmlFor="planPrep" hint="一行一条，例如上课要带的教材、试卷" error={errors.planPrep}>
+              <textarea id="planPrep" name="planPrep" defaultValue={initial.planPrep} className="field min-h-20" />
             </Field>
           </div>
         </div>

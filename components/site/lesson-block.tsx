@@ -25,6 +25,10 @@ export function hasNotes(lesson: Pick<LessonWithSubject, "summaryMd" | "homework
   return Boolean(lesson.summaryMd || lesson.homework || lesson.prep);
 }
 
+export function hasPlan(lesson: Pick<LessonWithSubject, "planMd" | "planPrep">) {
+  return Boolean(lesson.planMd || lesson.planPrep);
+}
+
 /** 课表格子：学科浅底填满，一节课就是课程表上的一格。 */
 export function LessonBlock({
   lesson,
@@ -97,6 +101,8 @@ export function LessonBlock({
       {lesson.topic ? <p className="mt-0.5 truncate text-base text-ink-2">{lesson.topic}</p> : null}
       {notes ? (
         <p className="mt-1.5 text-sm font-medium subj-ink">看纪要</p>
+      ) : lesson.status === "planned" && hasPlan(lesson) ? (
+        <p className="mt-1.5 text-sm font-medium subj-ink">看课前计划</p>
       ) : null}
     </Link>
   );

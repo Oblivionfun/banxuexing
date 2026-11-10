@@ -34,6 +34,8 @@ export default async function NewLessonPage({ searchParams }: PageProps<"/admin/
           summaryMd: "",
           homework: "",
           prep: "",
+          planMd: "",
+          planPrep: "",
           recordingUrl: "",
           source: "manual",
         }}

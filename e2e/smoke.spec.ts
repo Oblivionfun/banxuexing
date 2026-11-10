@@ -105,6 +105,34 @@ test("粘贴老师总结自动拆分，保存后家长端出现老师布置", as
   await expect(page.getByRole("region", { name: "老师最近布置" })).toContainText("背诵 Unit 3 单词");
 });
 
+test("导入老师的课前计划：识别科目和日期，新建课程并在家长端显示课前准备", async ({ page }) => {
+  await loginAdmin(page);
+  await page.goto("/admin/import");
+  await page
+    .getByLabel("老师原文")
+    .fill("家长您好，我是数学林老师。明天19:00的课前反馈如下：\n1. 本次计划讲：学习函数的奇偶性\n2. 课前准备：带上数学教材");
+  await page.getByRole("button", { name: "识别" }).click();
+
+  await expect(page.getByRole("radio", { name: "课前计划" })).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("radio", { name: "数学" })).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("radio", { name: /新建一节课/ })).toBeChecked();
+  await expect(page.getByLabel("开始")).toHaveValue("19:00");
+  await expect(page.getByLabel("结束")).toHaveValue("20:30");
+  await expect(page.getByLabel("课前准备")).toHaveValue("带上数学教材");
+  await expect(page.getByLabel(/同时把数学老师改成“林老师”/)).toBeChecked();
+
+  await page.getByRole("button", { name: "保存到这节课" }).click();
+  await expect(page.getByRole("main").getByText(/已写入数学 .+的课前计划/)).toBeVisible();
+  await page.getByRole("link", { name: "看家长端效果" }).click();
+  await expect(page.getByRole("heading", { name: "函数的奇偶性", level: 1 })).toBeVisible();
+  await expect(page.getByText("林老师")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "课前计划" })).toBeVisible();
+  await expect(page.getByText("带上数学教材")).toBeVisible();
+
+  await page.goto("/");
+  await expect(page.getByRole("region", { name: "老师最近布置" })).toContainText("带上数学教材");
+});
+
 test("同一时间段重复排课时先提醒冲突", async ({ page }) => {
   await loginAdmin(page);
   await page.goto("/admin/lessons/new");

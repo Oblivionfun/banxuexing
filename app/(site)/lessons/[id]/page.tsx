@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, PlayCircle } from "lucide-react";
 import { SubjectTag } from "@/components/subject-mark";
 import { FileRows } from "@/components/site/file-rows";
 import { Gallery } from "@/components/site/gallery";
-import { hasNotes } from "@/components/site/lesson-block";
+import { hasNotes, hasPlan } from "@/components/site/lesson-block";
 import { Markdown } from "@/components/site/markdown";
 import { AssignmentList, RedPenHeading } from "@/components/site/red-pen";
 import { WeChatDownloadHint } from "@/components/site/wechat-hint";
@@ -38,7 +38,16 @@ export default async function LessonPage({ params }: PageProps<"/lessons/[id]">)
     .map(({ id: fileId, originalName, width, height }) => ({ id: fileId, name: originalName, width, height }));
   const others = files.filter((file) => file.kind !== "image");
   const notes = hasNotes(lesson);
-  const assigned = Boolean(lesson.homework || lesson.prep);
+  const upcoming = lesson.status === "planned";
+  const beforeClass = upcoming ? lesson.planPrep : "";
+  const assigned = Boolean(lesson.homework || lesson.prep || beforeClass);
+  const planSection = lesson.planMd ? (
+    <section className="mt-10">
+      <h2 className="text-lg font-semibold text-ink">课前计划</h2>
+      <p className="mt-0.5 text-sm text-ink-3">老师上课前发的安排</p>
+      <Markdown className="mt-3 max-w-[68ch]">{lesson.planMd}</Markdown>
+    </section>
+  ) : null;
 
   return (
     <article className="mx-auto max-w-3xl">
@@ -67,11 +76,11 @@ export default async function LessonPage({ params }: PageProps<"/lessons/[id]">)
 
       {lesson.status === "cancelled" ? (
         <p className="mt-8 rounded-md bg-secondary px-4 py-3 text-ink-2">这节课已取消。</p>
-      ) : !notes && lesson.status === "planned" ? (
+      ) : !notes && upcoming && !hasPlan(lesson) ? (
         <p className="mt-8 rounded-md border border-dashed border-rule-strong px-4 py-5 text-ink-2">
           这节课还没上。上完课后，老师的总结和布置会出现在这里。
         </p>
-      ) : !notes ? (
+      ) : !notes && !upcoming ? (
         <p className="mt-8 rounded-md border border-dashed border-rule-strong px-4 py-5 text-ink-2">
           老师的总结还在整理中，稍后再来看看。
         </p>
@@ -80,8 +89,18 @@ export default async function LessonPage({ params }: PageProps<"/lessons/[id]">)
       {assigned ? (
         <section className="mt-8 rounded-lg border border-rule bg-surface px-4 pt-4 pb-3 sm:px-6">
           <RedPenHeading>老师布置</RedPenHeading>
-          <AssignmentList homework={lesson.homework} prep={lesson.prep} className="mt-3" />
+          <AssignmentList
+            beforeClass={beforeClass}
+            homework={lesson.homework}
+            prep={lesson.prep}
+            className="mt-3"
+          />
         </section>
+      ) : null}
+
+      {upcoming ? planSection : null}
+      {upcoming && !notes && hasPlan(lesson) ? (
+        <p className="mt-8 text-sm text-ink-3">上完课后，老师的总结和作业会出现在这里。</p>
       ) : null}
 
       {lesson.summaryMd ? (
@@ -106,6 +125,8 @@ export default async function LessonPage({ params }: PageProps<"/lessons/[id]">)
           <ChevronRight className="size-4 text-ink-3" />
         </a>
       ) : null}
+
+      {upcoming ? null : planSection}
 
       {files.length > 0 ? (
         <section className="mt-10 space-y-4">

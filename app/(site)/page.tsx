@@ -12,6 +12,7 @@ import {
   listRecentAssignments,
   listRecentNotes,
   listSubjectsWithStats,
+  listUpcomingPlanPrep,
   type SubjectWithStats,
 } from "@/lib/queries";
 import {
@@ -37,6 +38,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const lessons = listLessonsBetween(start, addDays(start, 6));
   const dayLessons = lessons.filter((lesson) => lesson.date === selected);
   const assignments = listRecentAssignments(today);
+  const upcomingPrep = listUpcomingPlanPrep(today);
   const notes = listRecentNotes(4);
   const subjects = listSubjectsWithStats(today);
   const weekCount = lessons.filter((lesson) => lesson.status !== "cancelled").length;
@@ -105,10 +107,23 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
             <div id="assign-heading">
               <RedPenHeading>老师最近布置</RedPenHeading>
             </div>
-            {assignments.length === 0 ? (
+            {assignments.length === 0 && upcomingPrep.length === 0 ? (
               <p className="mt-4 text-ink-3">最近两周老师还没有布置作业或课前准备。</p>
             ) : (
               <div className="mt-4 divide-y divide-rule rounded-lg border border-rule bg-surface">
+                {upcomingPrep.map((lesson) => (
+                  <article key={`prep-${lesson.id}`} className="px-4 pt-3 pb-2">
+                    <Link
+                      href={`/lessons/${lesson.id}`}
+                      className="flex items-center gap-2 text-sm text-ink-3 hover:text-ink"
+                    >
+                      <SubjectTag name={lesson.subject.name} hue={lesson.subject.hue} />
+                      <span className="tabular">{formatRelativeDate(lesson.date, today)}上课前</span>
+                      <ChevronRight className="ml-auto size-4" />
+                    </Link>
+                    <AssignmentList beforeClass={lesson.planPrep} className="mt-1" />
+                  </article>
+                ))}
                 {assignments.map((lesson) => (
                   <article key={lesson.id} className="px-4 pt-3 pb-2">
                     <Link

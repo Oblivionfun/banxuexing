@@ -75,6 +75,8 @@ export const lessons = sqliteTable(
     summaryMd: text("summary_md").notNull().default(""),
     homework: text("homework").notNull().default(""),
     prep: text("prep").notNull().default(""),
+    planMd: text("plan_md").notNull().default(""),
+    planPrep: text("plan_prep").notNull().default(""),
     recordingUrl: text("recording_url").notNull().default(""),
     source: text("source", { enum: LESSON_SOURCES }).notNull().default("manual"),
     notifiedAt: integer("notified_at", { mode: "timestamp_ms" }),

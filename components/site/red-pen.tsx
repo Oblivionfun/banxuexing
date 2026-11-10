@@ -68,17 +68,20 @@ export function RedPenHeading({
   );
 }
 
-/** 作业与下节准备：作业本横线上的条目，标签用红笔。 */
+/** 课前准备、作业与下节准备：作业本横线上的条目，标签用红笔。 */
 export function AssignmentList({
-  homework,
-  prep,
+  homework = "",
+  prep = "",
+  beforeClass = "",
   className,
 }: {
-  homework: string;
-  prep: string;
+  homework?: string;
+  prep?: string;
+  beforeClass?: string;
   className?: string;
 }) {
   const groups = [
+    { label: "课前准备", items: splitItems(beforeClass) },
     { label: "作业", items: splitItems(homework) },
     { label: "下节准备", items: splitItems(prep) },
   ].filter((group) => group.items.length > 0);

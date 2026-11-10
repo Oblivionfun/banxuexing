@@ -8,6 +8,7 @@ const ITEMS = [
   { href: "/admin", label: "概览", exact: true },
   { href: "/admin/upload", label: "上传资料" },
   { href: "/admin/lessons", label: "课程与纪要" },
+  { href: "/admin/import", label: "导入群消息" },
   { href: "/admin/materials", label: "资料册" },
   { href: "/admin/subjects", label: "科目与老师" },
   { href: "/admin/scheduling", label: "排课助手" },

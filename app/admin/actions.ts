@@ -70,6 +70,8 @@ const lessonSchema = z
     summaryMd: z.string().max(20000, "内容太长了"),
     homework: z.string().max(5000, "内容太长了"),
     prep: z.string().max(5000, "内容太长了"),
+    planMd: z.string().max(10000, "内容太长了"),
+    planPrep: z.string().max(5000, "内容太长了"),
     recordingUrl: z.union([z.literal(""), z.url("请填写完整的链接，以 http 开头")]),
     source: z.enum(LESSON_SOURCES),
   })
@@ -89,6 +91,8 @@ function readLesson(formData: FormData) {
     summaryMd: text(formData, "summaryMd").trim(),
     homework: text(formData, "homework").trim(),
     prep: text(formData, "prep").trim(),
+    planMd: text(formData, "planMd").trim(),
+    planPrep: text(formData, "planPrep").trim(),
     recordingUrl: text(formData, "recordingUrl").trim(),
     source: text(formData, "source") || "manual",
   });
@@ -166,11 +170,17 @@ export async function saveLessonAction(
       data.summaryMd !== existing.lesson.summaryMd ||
       data.homework !== existing.lesson.homework ||
       data.prep !== existing.lesson.prep;
+    const wrotePlan = data.planMd !== existing.lesson.planMd || data.planPrep !== existing.lesson.planPrep;
+    const [action, verb] = wroteNotes
+      ? ["lesson.notes", "更新纪要"]
+      : wrotePlan
+        ? ["lesson.plan", "更新课前计划"]
+        : ["lesson.update", "修改课程"];
     logActivity({
-      action: wroteNotes ? "lesson.notes" : "lesson.update",
+      action,
       entityType: "lesson",
       entityId: id,
-      summary: `${wroteNotes ? "更新纪要" : "修改课程"}：${subject.name} ${formatMonthDay(data.date)}`,
+      summary: `${verb}：${subject.name} ${formatMonthDay(data.date)}`,
     });
   }
   refreshAll();

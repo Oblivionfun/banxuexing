@@ -147,6 +147,18 @@ export function listLessonsForSubject(subjectId: number): LessonWithSubject[] {
   return lessonRows(and(isNull(lessons.deletedAt), eq(lessons.subjectId, subjectId)), "desc");
 }
 
+/** 导入群消息时，列出这个科目在某天前后两周的课供选择。 */
+export function listLessonsAround(subjectId: number, date: string, days = 14): LessonWithSubject[] {
+  return lessonRows(
+    and(
+      isNull(lessons.deletedAt),
+      eq(lessons.subjectId, subjectId),
+      gte(lessons.date, addDays(date, -days)),
+      lte(lessons.date, addDays(date, days)),
+    ),
+  );
+}
+
 export function listAllLessons(limit = 300): LessonWithSubject[] {
   return lessonRows(and(isNull(lessons.deletedAt)), "desc").slice(0, limit);
 }
@@ -174,6 +186,25 @@ export function listRecentAssignments(today: string, days = 14): LessonWithSubje
       or(ne(lessons.homework, ""), ne(lessons.prep, "")),
     ),
     "desc",
+  );
+  const seen = new Set<number>();
+  return rows.filter((row) => {
+    if (seen.has(row.subjectId)) return false;
+    seen.add(row.subjectId);
+    return true;
+  });
+}
+
+/** 接下来一周每个科目最近一节有"课前准备"的课。 */
+export function listUpcomingPlanPrep(today: string, days = 7): LessonWithSubject[] {
+  const rows = lessonRows(
+    and(
+      isNull(lessons.deletedAt),
+      eq(lessons.status, "planned"),
+      gte(lessons.date, today),
+      lte(lessons.date, addDays(today, days)),
+      ne(lessons.planPrep, ""),
+    ),
   );
   const seen = new Set<number>();
   return rows.filter((row) => {

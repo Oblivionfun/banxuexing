@@ -16,11 +16,12 @@ const SUMMARY_HEADER =
   /^(?:本节课?|今天|今日|本次|课堂)课?(?:内容|总结|小结|讲了|学习了|情况)\s*[:：]\s*(.*)$/;
 const PREP_INLINE = /^(?:预习|复习|带上|请带|下节课?|下次课?)/;
 
+/** 去掉序号和列表符号，并把"【作业】"这类方括号小标题统一成"作业："。 */
 function cleanLine(line: string): string {
   return line
-    .replace(/^[\s【\[]*/, "")
+    .trim()
     .replace(/^(?:\d+[.、．)）]|[-*•·])\s*/, "")
-    .replace(/[】\]]/, "")
+    .replace(/^[【\[]([^】\]]{1,12})[】\]]\s*/, "$1：")
     .trim();
 }
 

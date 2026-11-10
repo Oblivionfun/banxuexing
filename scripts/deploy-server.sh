@@ -111,7 +111,9 @@ server {
     location / {
         proxy_pass http://127.0.0.1:$app_port;
         proxy_http_version 1.1;
-        proxy_set_header Host \$host;
+        # 必须带端口：Server Actions 会核对 Origin 与转发的 Host，不一致就拒绝（登录、保存都会失败）
+        proxy_set_header Host \$http_host;
+        proxy_set_header X-Forwarded-Host \$http_host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;

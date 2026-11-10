@@ -56,17 +56,19 @@ export function LessonForm({
   const [prep, setPrep] = useState(initial.prep);
   const [raw, setRaw] = useState("");
   const [structuring, startStructuring] = useTransition();
-  const [allowOverlap, setAllowOverlap] = useState(false);
+  // 服务端提示时间冲突后，再点一次保存即确认；之后改了日期或时间就要重新确认
+  const [editedAfter, setEditedAfter] = useState<FormState | null>(null);
+  const allowOverlap = Boolean(state.needsConfirm) && editedAfter !== state;
+  const markTimeEdited = () => setEditedAfter(state);
   const errors = state.fieldErrors ?? {};
 
   useEffect(() => {
     if (state.ok && state.message) toast.success(state.message);
-    if (state.needsConfirm) setAllowOverlap(true);
   }, [state]);
 
   const onStartChange = (value: string) => {
     setStartTime(value);
-    setAllowOverlap(false);
+    markTimeEdited();
     const minutes = subjects.find((item) => item.id === subjectId)?.lessonMinutes ?? 90;
     if (isTimeString(value)) {
       const end = toMinutes(value) + minutes;
@@ -131,7 +133,7 @@ export function LessonForm({
                 type="date"
                 required
                 defaultValue={initial.date}
-                onChange={() => setAllowOverlap(false)}
+                onChange={markTimeEdited}
                 className="field"
               />
             </Field>
@@ -157,7 +159,7 @@ export function LessonForm({
                 value={endTime}
                 onChange={(event) => {
                   setEndTime(event.target.value);
-                  setAllowOverlap(false);
+                  markTimeEdited();
                 }}
                 className="field tabular"
               />

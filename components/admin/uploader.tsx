@@ -88,7 +88,10 @@ export function Uploader({
   const [running, setRunning] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const itemsRef = useRef<Item[]>([]);
-  itemsRef.current = items;
+
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
 
   useEffect(() => {
     return () => itemsRef.current.forEach((item) => item.previewUrl && URL.revokeObjectURL(item.previewUrl));

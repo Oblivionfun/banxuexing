@@ -39,7 +39,6 @@
   "devDependencies": {
     "@playwright/test": "^1.65.0",
     "@tailwindcss/turbopack": "4.3.3",
-    "@types/archiver": "^8.0.0",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^24.19.2",
     "@types/react": "^19",

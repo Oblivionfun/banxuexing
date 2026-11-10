@@ -22,7 +22,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(login);
   }
 
-  if (pathname.startsWith("/api/admin") || pathname === "/api/upload") {
+  if (pathname.startsWith("/api/admin")) {
     return admin ? NextResponse.next() : unauthorized("需要管理口令");
   }
 
@@ -33,8 +33,9 @@ export function proxy(request: NextRequest) {
   return NextResponse.redirect(new URL("/denied", request.url));
 }
 
+// /api/upload 不经过 proxy：经过 proxy 的请求体会被缓冲并在 10MB 处截断，上传接口自行校验口令。
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icon.svg|robots.txt|s/|denied|api/health).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon.svg|robots.txt|s/|denied|api/health|api/upload).*)",
   ],
 };

@@ -1,4 +1,4 @@
-import type { FileKind } from "@/lib/db/schema";
+import type { FileKind } from "@/lib/enums";
 
 export const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 

@@ -1,4 +1,4 @@
-import type { FileKind, LessonSource, LessonStatus, MaterialCategory } from "@/lib/db/schema";
+import type { FileKind, LessonSource, LessonStatus, MaterialCategory } from "@/lib/enums";
 
 export function lessonStatusLabel(status: LessonStatus): string {
   switch (status) {

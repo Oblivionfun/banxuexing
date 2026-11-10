@@ -1,26 +1,13 @@
 import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  AVAILABILITY_OWNERS,
+  FILE_KINDS,
+  LESSON_SOURCES,
+  LESSON_STATUSES,
+  MATERIAL_CATEGORIES,
+} from "@/lib/enums";
 
-export const LESSON_STATUSES = ["planned", "done", "cancelled"] as const;
-export type LessonStatus = (typeof LESSON_STATUSES)[number];
-
-export const LESSON_SOURCES = ["manual", "wechat", "meeting"] as const;
-export type LessonSource = (typeof LESSON_SOURCES)[number];
-
-export const MATERIAL_CATEGORIES = [
-  "textbook",
-  "paper",
-  "exam",
-  "homework",
-  "notes",
-  "other",
-] as const;
-export type MaterialCategory = (typeof MATERIAL_CATEGORIES)[number];
-
-export const FILE_KINDS = ["image", "pdf", "doc", "audio", "other"] as const;
-export type FileKind = (typeof FILE_KINDS)[number];
-
-export const AVAILABILITY_OWNERS = ["student", "subject"] as const;
-export type AvailabilityOwner = (typeof AVAILABILITY_OWNERS)[number];
+export * from "@/lib/enums";
 
 const createdAt = () =>
   integer("created_at", { mode: "timestamp_ms" })

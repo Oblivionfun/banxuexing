@@ -1,0 +1,19 @@
+{$DOMAIN} {
+	encode zstd gzip
+
+	request_body {
+		max_size 120MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	reverse_proxy app:3000 {
+		transport http {
+			read_timeout 10m
+			write_timeout 10m
+		}
+	}
+}

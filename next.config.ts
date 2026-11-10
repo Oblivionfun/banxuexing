@@ -26,6 +26,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: "standalone",
   serverExternalPackages: ["better-sqlite3", "sharp"],
+  // 运行时数据目录不能被打进构建产物
+  outputFileTracingExcludes: { "*": ["./data/**", "./e2e/**", "./tests/**", "./scripts/**"] },
+  outputFileTracingIncludes: { "*": ["./drizzle/**"] },
   poweredByHeader: false,
   images: { unoptimized: true },
   experimental: {

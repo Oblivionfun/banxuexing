@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+data
+.env
+.env.*
+!.env.example
+.impeccable
+test-results
+playwright-report
+*.md
+!README.md

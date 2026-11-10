@@ -13,7 +13,8 @@ const schema = z.object({
   SHARE_TOKEN: z.string().min(16, "SHARE_TOKEN 至少 16 位"),
   ADMIN_PASSCODE: z.string().min(6, "ADMIN_PASSCODE 至少 6 位"),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET 至少 32 位"),
-  DATA_DIR: z.string().default("./data"),
+  // Vercel 函数只有 /tmp 可写，且内容不持久
+  DATA_DIR: z.string().default(process.env.VERCEL ? "/tmp/banxuexing" : "./data"),
   AI_BASE_URL: optionalString,
   AI_API_KEY: optionalString,
   AI_MODEL: optionalString,

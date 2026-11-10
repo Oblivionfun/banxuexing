@@ -24,11 +24,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // 自托管用 standalone（Docker）；Vercel 有自己的构建输出
+  output: process.env.VERCEL ? undefined : "standalone",
   serverExternalPackages: ["better-sqlite3", "sharp"],
   // 运行时数据目录不能被打进构建产物
   outputFileTracingExcludes: { "*": ["./data/**", "./e2e/**", "./tests/**", "./scripts/**"] },
-  outputFileTracingIncludes: { "*": ["./drizzle/**"] },
+  outputFileTracingIncludes: { "*": ["./drizzle/**", "./demo/**"] },
   poweredByHeader: false,
   images: { unoptimized: true },
   experimental: {

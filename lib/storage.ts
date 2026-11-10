@@ -184,6 +184,15 @@ export async function commitUpload(
   return { sha256: received.sha256, size: received.size, mime: resolved.mime, kind, width, height };
 }
 
+/** 把内存中的文件按上传同样的流程存入（用于写入演示数据）。 */
+export async function storeBuffer(root: string, buffer: Buffer, originalName: string): Promise<StoredBlob> {
+  await fsp.mkdir(tmpDir(root), { recursive: true });
+  const tmpPath = path.join(tmpDir(root), `${randomUUID()}.part`);
+  await fsp.writeFile(tmpPath, buffer);
+  const sha256 = createHash("sha256").update(buffer).digest("hex");
+  return commitUpload(root, { tmpPath, sha256, size: buffer.length }, originalName);
+}
+
 /** 彻底删除内容文件（调用方需先确认已无记录引用）。 */
 export async function removeBlob(root: string, sha256: string): Promise<void> {
   await Promise.all(

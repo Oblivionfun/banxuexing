@@ -11,7 +11,6 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
-    "seed:demo": "node scripts/seed-demo.mjs",
     "backup": "node scripts/backup.mjs"
   },
   "dependencies": {
@@ -62,5 +61,8 @@
     "esbuild@0.25.12": true,
     "esbuild@0.28.2": true,
     "better-sqlite3": false
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

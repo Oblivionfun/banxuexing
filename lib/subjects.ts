@@ -15,7 +15,7 @@ export const DEFAULT_SUBJECTS: ReadonlyArray<{ slug: string; name: string; hue: 
   { slug: "politics", name: "政治", hue: 340 },
 ];
 
-export const DEFAULT_STUDENT_NAME = "何同学";
+export const DEFAULT_STUDENT_NAME = "葛玥辰同学";
 
 /** 有专属生成封面的科目；管理端新增的科目用通用封面。 */
 const COVER_SLUGS = new Set(DEFAULT_SUBJECTS.map((subject) => subject.slug));

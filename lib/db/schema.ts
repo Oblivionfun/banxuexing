@@ -48,6 +48,7 @@ export const subjects = sqliteTable(
     sortOrder: integer("sort_order").notNull().default(0),
     teacherName: text("teacher_name").notNull().default(""),
     teacherNote: text("teacher_note").notNull().default(""),
+    teacherProfile: text("teacher_profile").notNull().default(""),
     planMd: text("plan_md").notNull().default(""),
     planUpdatedAt: integer("plan_updated_at", { mode: "timestamp_ms" }),
     weeklyLessons: integer("weekly_lessons").notNull().default(1),

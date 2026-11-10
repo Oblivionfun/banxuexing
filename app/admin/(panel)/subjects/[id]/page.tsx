@@ -31,6 +31,7 @@ export default async function EditSubjectPage({ params, searchParams }: PageProp
           sortOrder: subject.sortOrder,
           teacherName: subject.teacherName,
           teacherNote: subject.teacherNote,
+          teacherProfile: subject.teacherProfile,
           planMd: subject.planMd,
           weeklyLessons: subject.weeklyLessons,
           lessonMinutes: subject.lessonMinutes,

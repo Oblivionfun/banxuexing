@@ -22,6 +22,7 @@ export default function NewSubjectPage() {
           sortOrder: subjects.length,
           teacherName: "",
           teacherNote: "",
+          teacherProfile: "",
           planMd: "",
           weeklyLessons: 1,
           lessonMinutes: 90,

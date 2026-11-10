@@ -1,0 +1,1 @@
+ALTER TABLE `subjects` ADD `teacher_profile` text DEFAULT '' NOT NULL;

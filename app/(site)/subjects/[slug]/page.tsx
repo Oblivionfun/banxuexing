@@ -8,16 +8,19 @@ import { LessonBlock } from "@/components/site/lesson-block";
 import { Markdown } from "@/components/site/markdown";
 import { MaterialGrid } from "@/components/site/material-grid";
 import { NotesTimeline } from "@/components/site/notes-timeline";
+import { TeacherProfileView } from "@/components/site/teacher-profile";
 import { MATERIAL_CATEGORIES } from "@/lib/enums";
 import { materialCategoryLabel } from "@/lib/labels";
 import { getSubjectBySlug, listLessonsForSubject, listMaterialSets } from "@/lib/queries";
 import { subjectStyle } from "@/lib/subjects";
+import { parseTeacherProfile, visibleProfile } from "@/lib/teacher-profile";
 import { formatDateTime, formatRelativeDate, todayKey } from "@/lib/time";
 
 const TABS = [
   { key: "notes", label: "课程纪要" },
   { key: "materials", label: "资料" },
   { key: "plan", label: "老师规划" },
+  { key: "teacher", label: "老师介绍" },
 ] as const;
 type TabKey = (typeof TABS)[number]["key"];
 
@@ -42,6 +45,7 @@ export default async function SubjectPage({ params, searchParams }: PageProps<"/
     .slice(0, 3);
   const past = lessons.filter((lesson) => lesson.status === "done");
   const doneCount = past.length;
+  const profile = visibleProfile(parseTeacherProfile(subject.teacherProfile));
 
   return (
     <>
@@ -144,6 +148,14 @@ export default async function SubjectPage({ params, searchParams }: PageProps<"/
             </article>
           ) : (
             <p className="text-ink-3">老师还没有写整体规划。</p>
+          )
+        ) : null}
+
+        {tab === "teacher" ? (
+          profile.sections.length > 0 ? (
+            <TeacherProfileView profile={profile} />
+          ) : (
+            <p className="text-ink-3">还没有{subject.teacherName || "老师"}的介绍。</p>
           )
         ) : null}
       </div>

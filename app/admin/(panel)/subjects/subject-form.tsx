@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { cn } from "cn";
 import { SubmitButton } from "@/components/admin/buttons";
 import { Field, FormSection } from "@/components/admin/field";
+import { Button } from "@/components/ui/button";
 import { SUBJECT_HUES, subjectStyle } from "@/lib/subjects";
+import { TEACHER_PROFILE_TEMPLATE } from "@/lib/teacher-profile";
 import { saveSubjectAction, type FormState } from "../../actions";
 
 export type SubjectFormValues = {
@@ -14,6 +16,7 @@ export type SubjectFormValues = {
   sortOrder: number;
   teacherName: string;
   teacherNote: string;
+  teacherProfile: string;
   planMd: string;
   weeklyLessons: number;
   lessonMinutes: number;
@@ -22,6 +25,7 @@ export type SubjectFormValues = {
 export function SubjectForm({ subjectId, initial }: { subjectId: number | null; initial: SubjectFormValues }) {
   const [state, action] = useActionState<FormState, FormData>(saveSubjectAction.bind(null, subjectId), {});
   const [hue, setHue] = useState(initial.hue);
+  const [profile, setProfile] = useState(initial.teacherProfile);
   const errors = state.fieldErrors ?? {};
   useEffect(() => {
     if (state.ok && state.message) toast.success(state.message);
@@ -79,6 +83,25 @@ export function SubjectForm({ subjectId, initial }: { subjectId: number | null; 
             <input id="teacherNote" name="teacherNote" defaultValue={initial.teacherNote} maxLength={200} className="field" />
           </Field>
         </div>
+        <Field
+          label="老师简历"
+          htmlFor="teacherProfile"
+          hint="家长在科目页的“老师介绍”里能看到。按模板填写，冒号后面留空的项不会显示。"
+          error={errors.teacherProfile}
+        >
+          <textarea
+            id="teacherProfile"
+            name="teacherProfile"
+            value={profile}
+            onChange={(event) => setProfile(event.target.value)}
+            className="field min-h-96 leading-7"
+          />
+        </Field>
+        {profile.trim() ? null : (
+          <Button type="button" variant="outline" size="sm" onClick={() => setProfile(TEACHER_PROFILE_TEMPLATE)}>
+            填入简历模板
+          </Button>
+        )}
       </FormSection>
 
       <FormSection title="老师整体规划" description="家长在科目页能看到。可以写阶段目标、教学安排、需要家长配合的事。">

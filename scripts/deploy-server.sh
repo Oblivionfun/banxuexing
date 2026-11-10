@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # 部署到已有 nginx 的 Linux 服务器（不用 Docker）：独立 Node 24 + systemd + nginx 新端口反向代理。
-# 用法：scripts/deploy-server.sh root@服务器IP [对外端口，默认 8100]
+# 用法：scripts/deploy-server.sh root@服务器IP [对外端口，默认 8000]
 # 服务器上的 /opt/banxuexing/.env 和 /opt/banxuexing/data 不会被覆盖。
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 host="${1:-}"
-public_port="${2:-8100}"
+public_port="${2:-8000}"
 app_port=3310
 node_version=v24.19.0
 base=/opt/banxuexing

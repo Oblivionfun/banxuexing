@@ -17,6 +17,14 @@ export const DEFAULT_SUBJECTS: ReadonlyArray<{ slug: string; name: string; hue: 
 
 export const DEFAULT_STUDENT_NAME = "何同学";
 
+/** 有专属生成封面的科目；管理端新增的科目用通用封面。 */
+const COVER_SLUGS = new Set(DEFAULT_SUBJECTS.map((subject) => subject.slug));
+
+export function subjectCoverUrl(slug: string, size: "lg" | "sm" = "lg"): string {
+  const name = COVER_SLUGS.has(slug) ? slug : "default";
+  return `/covers/${name}${size === "sm" ? "-sm" : ""}.webp`;
+}
+
 export function subjectStyle(hue: number): CSSProperties {
   return { "--h": hue } as CSSProperties;
 }

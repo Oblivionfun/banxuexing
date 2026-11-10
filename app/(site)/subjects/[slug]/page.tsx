@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "cn";
-import { SubjectSwatch } from "@/components/subject-mark";
+import { SubjectCover } from "@/components/subject-cover";
 import { LessonBlock } from "@/components/site/lesson-block";
 import { Markdown } from "@/components/site/markdown";
 import { MaterialGrid } from "@/components/site/material-grid";
@@ -49,21 +49,24 @@ export default async function SubjectPage({ params, searchParams }: PageProps<"/
         <ChevronLeft className="size-4" />
         本周
       </Link>
-      <header style={subjectStyle(subject.hue)} className="subj-tint -mx-4 px-4 py-5 sm:mx-0 sm:rounded-lg sm:px-6">
-        <h1 className="flex items-center gap-2.5 text-2xl font-semibold text-ink sm:text-3xl">
-          <SubjectSwatch hue={subject.hue} className="size-3.5 rounded" />
-          {subject.name}
-        </h1>
-        <p className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-ink-2">
-          <span>{subject.teacherName || "老师待定"}</span>
-          <span>已上 {doneCount} 节</span>
-          <span>资料 {sets.length} 册</span>
-          {upcoming[0] ? (
-            <span className="subj-ink font-medium">
-              下节 {formatRelativeDate(upcoming[0].date, today)} {upcoming[0].startTime}
-            </span>
-          ) : null}
-        </p>
+      <header
+        style={subjectStyle(subject.hue)}
+        className="subj-tint -mx-4 flex items-center gap-4 px-4 py-4 sm:mx-0 sm:gap-5 sm:rounded-lg sm:px-5"
+      >
+        <SubjectCover slug={subject.slug} className="w-20 shrink-0 rounded-md border border-white/70 sm:w-24" />
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold text-ink sm:text-3xl">{subject.name}</h1>
+          <p className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-ink-2">
+            <span>{subject.teacherName || "老师待定"}</span>
+            <span>已上 {doneCount} 节</span>
+            <span>资料 {sets.length} 册</span>
+            {upcoming[0] ? (
+              <span className="subj-ink font-medium">
+                下节 {formatRelativeDate(upcoming[0].date, today)} {upcoming[0].startTime}
+              </span>
+            ) : null}
+          </p>
+        </div>
       </header>
 
       <nav aria-label="科目内容" className="mt-4 flex gap-1 border-b border-rule">

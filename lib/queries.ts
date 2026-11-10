@@ -32,6 +32,8 @@ export type MaterialSetSummary = MaterialSet & {
   subject: SubjectRef;
   fileCount: number;
   coverFileId: string | null;
+  /** 第一个文件的类型；没有照片封面时用来标注"PDF"等 */
+  primaryKind: FileRow["kind"] | null;
 };
 
 const subjectRef = {
@@ -228,6 +230,7 @@ export function listMaterialSets(subjectId?: number): MaterialSetSummary[] {
       subject,
       fileCount: own.length,
       coverFileId: own.find((file) => file.kind === "image")?.id ?? null,
+      primaryKind: own[0]?.kind ?? null,
     };
   });
 }

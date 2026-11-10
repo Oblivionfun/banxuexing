@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, PackageOpen } from "lucide-react";
+import { SubjectCover } from "@/components/subject-cover";
 import { SubjectTag } from "@/components/subject-mark";
 import { FileRows } from "@/components/site/file-rows";
 import { Gallery } from "@/components/site/gallery";
@@ -37,6 +38,9 @@ export default async function MaterialSetPage({ params }: PageProps<"/materials/
       </Link>
 
       <header className="flex flex-wrap items-end gap-x-6 gap-y-4">
+        {images.length === 0 ? (
+          <SubjectCover slug={subject.slug} className="w-24 shrink-0 rounded-md border border-rule sm:w-28" />
+        ) : null}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <SubjectTag name={subject.name} hue={subject.hue} />

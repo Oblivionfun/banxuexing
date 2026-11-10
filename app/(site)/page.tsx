@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { SubjectSwatch, SubjectTag } from "@/components/subject-mark";
+import { SubjectCover } from "@/components/subject-cover";
+import { SubjectTag } from "@/components/subject-mark";
 import { LessonBlock } from "@/components/site/lesson-block";
 import { NotesTimeline } from "@/components/site/notes-timeline";
 import { AssignmentList, RedPenHeading } from "@/components/site/red-pen";
@@ -170,8 +171,8 @@ function SubjectsSection({
       <ul className="mt-3 grid border-t border-rule sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-3">
         {subjects.map((subject) => (
           <li key={subject.id} className="border-b border-rule">
-            <Link href={`/subjects/${subject.slug}`} className="group flex items-center gap-3 py-3.5">
-              <SubjectSwatch hue={subject.hue} className="size-3" />
+            <Link href={`/subjects/${subject.slug}`} className="group flex items-center gap-3.5 py-3">
+              <SubjectCover slug={subject.slug} size="sm" className="w-11 shrink-0 rounded-[4px] border border-rule" />
               <span className="min-w-0 flex-1">
                 <span className="flex items-baseline gap-2">
                   <span className="font-semibold text-ink">{subject.name}</span>

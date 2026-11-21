@@ -75,6 +75,23 @@ test("口令错误会提示，登录后上传多张照片，家长端能看大�
   expect(zip.headers()["content-type"]).toBe("application/zip");
 });
 
+test("可以把照片直接拖进上传区", async ({ page }) => {
+  await loginAdmin(page);
+  await page.goto("/admin/upload");
+  await page.getByRole("radio", { name: "数学" }).click();
+
+  const dataTransfer = await page.evaluateHandle((base64) => {
+    const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
+    const transfer = new DataTransfer();
+    transfer.items.add(new File([bytes], "拖进来的照片.png", { type: "image/png" }));
+    return transfer;
+  }, PNG_A.toString("base64"));
+
+  await page.dispatchEvent("label[for=uploader-input]", "drop", { dataTransfer });
+  await expect(page.getByText("拖进来的照片.png")).toBeVisible();
+  await expect(page.getByText("等待上传")).toBeVisible();
+});
+
 test("粘贴老师总结自动拆分，保存后家长端出现老师布置", async ({ page }) => {
   await loginAdmin(page);
   await page.goto("/admin/lessons/new");
@@ -143,6 +160,38 @@ test("同一时间段重复排课时先提醒冲突", async ({ page }) => {
   await expect(page.getByRole("alert").filter({ hasText: "冲突" })).toBeVisible();
   await page.getByRole("button", { name: "仍然保存" }).click();
   await expect(page).toHaveURL(/\/admin\/lessons\/\d+\?saved=1/);
+});
+
+test.describe("手机底部导航", () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+
+  test("家长端底部四个入口可以切换", async ({ page }) => {
+    await page.goto(SHARE_PATH);
+    const nav = page.getByRole("navigation", { name: "主导航" });
+    await expect(nav.getByRole("link", { name: "本周" })).toHaveAttribute("aria-current", "page");
+
+    await nav.getByRole("link", { name: "科目" }).click();
+    await expect(page.getByRole("heading", { name: "科目", level: 1 })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "科目" })).toHaveAttribute("aria-current", "page");
+
+    await nav.getByRole("link", { name: "资料" }).click();
+    await expect(page.getByRole("heading", { name: "资料", level: 1 })).toBeVisible();
+  });
+
+  test("管理端底部快捷入口可以进入上传页和更多栏目", async ({ page }) => {
+    await loginAdmin(page);
+    const nav = page.getByRole("navigation", { name: "管理快捷导航" });
+
+    await nav.getByRole("link", { name: "上传" }).click();
+    await expect(page).toHaveURL(/\/admin\/upload/);
+    await expect(page.getByRole("heading", { name: "上传资料" })).toBeVisible();
+
+    await nav.getByRole("link", { name: "更多" }).click();
+    await expect(page).toHaveURL(/\/admin\/more/);
+    await expect(page.getByRole("heading", { name: "更多" })).toBeVisible();
+    await page.getByRole("link", { name: /科目与老师/ }).click();
+    await expect(page).toHaveURL(/\/admin\/subjects/);
+  });
 });
 
 test.describe("手机微信", () => {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ExternalLink, LogOut } from "lucide-react";
+import { AdminBottomNav } from "@/components/admin/admin-bottom-nav";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { BrandBar } from "@/components/site/brand-bar";
 import { logoutAction } from "../auth-actions";
@@ -34,7 +35,10 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
         </div>
       </BrandBar>
       <AdminNav />
-      <main className="mx-auto max-w-7xl px-4 pt-8 pb-24 sm:px-6">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 pt-8 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:px-6 lg:pb-24">
+        {children}
+      </main>
+      <AdminBottomNav />
     </div>
   );
 }

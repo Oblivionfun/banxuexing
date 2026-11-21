@@ -12,12 +12,17 @@ const ITEMS = [
     label: "资料",
     match: (path: string) => path.startsWith("/materials"),
   },
+  {
+    href: "/subjects",
+    label: "科目",
+    match: (path: string) => path.startsWith("/subjects"),
+  },
 ] as const;
 
 export function SiteNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="主导航" className="ml-auto flex items-center gap-0.5">
+    <nav aria-label="主导航" className="ml-auto hidden items-center gap-0.5 lg:flex">
       {ITEMS.map((item) => {
         const active = item.match(pathname);
         return (

@@ -1,7 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type DragEvent as ReactDragEvent,
+} from "react";
 import { AlertCircle, CheckCircle2, FileText, ImagePlus, Loader2, RotateCw, X } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { ACCEPT_ATTRIBUTE, MAX_UPLOAD_BYTES } from "@/lib/file-types";
@@ -71,6 +78,30 @@ function uploadOnce(
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** 从拖放数据里取出文件；文件夹浏览器给的不是真正文件，单独计数用于提示。 */
+function filesFromDrop(transfer: DataTransfer): { files: File[]; folders: number } {
+  const items = Array.from(transfer.items ?? []);
+  if (items.length === 0) return { files: Array.from(transfer.files), folders: 0 };
+  const files: File[] = [];
+  let folders = 0;
+  for (const item of items) {
+    if (item.kind !== "file") continue;
+    let directory = false;
+    try {
+      directory = Boolean(item.webkitGetAsEntry?.()?.isDirectory);
+    } catch {
+      /* 取不到目录信息时按普通文件处理 */
+    }
+    if (directory) {
+      folders += 1;
+      continue;
+    }
+    const file = item.getAsFile();
+    if (file) files.push(file);
+  }
+  return { files, folders };
+}
+
 export function Uploader({
   resolveTarget,
   onFinished,
@@ -86,6 +117,7 @@ export function Uploader({
 }) {
   const [items, setItems] = useState<Item[]>([]);
   const [running, setRunning] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const itemsRef = useRef<Item[]>([]);
 
@@ -106,25 +138,90 @@ export function Uploader({
     return () => window.removeEventListener("beforeunload", warn);
   }, [running]);
 
+  // 文件拖到虚线框外时，浏览器默认会直接打开它，正在排队的列表就丢了
+  useEffect(() => {
+    const hasFiles = (event: DragEvent) => event.dataTransfer?.types.includes("Files") ?? false;
+    const prevent = (event: DragEvent) => {
+      if (hasFiles(event)) event.preventDefault();
+    };
+    const reset = () => setDragging(false);
+    window.addEventListener("dragover", prevent);
+    window.addEventListener("drop", prevent);
+    window.addEventListener("drop", reset);
+    window.addEventListener("dragend", reset);
+    return () => {
+      window.removeEventListener("dragover", prevent);
+      window.removeEventListener("drop", prevent);
+      window.removeEventListener("drop", reset);
+      window.removeEventListener("dragend", reset);
+    };
+  }, []);
+
   const patch = useCallback((key: string, update: Partial<Item>) => {
     setItems((current) => current.map((item) => (item.key === key ? { ...item, ...update } : item)));
   }, []);
 
-  const addFiles = (list: FileList | null) => {
+  const addFiles = (list: FileList | File[] | null) => {
     if (!list) return;
-    const next: Item[] = Array.from(list).map((file) => {
+    const incoming = Array.from(list);
+    if (incoming.length === 0) return;
+    const next: Item[] = incoming.map((file) => {
       const tooLarge = file.size > MAX_UPLOAD_BYTES;
+      const empty = file.size === 0;
       return {
         key: `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
         file,
-        status: tooLarge ? "error" : "queued",
+        status: tooLarge || empty ? "error" : "queued",
         progress: 0,
-        error: tooLarge ? `超过 ${MAX_UPLOAD_BYTES / 1024 / 1024} MB 上限` : undefined,
+        error: tooLarge
+          ? `超过 ${MAX_UPLOAD_BYTES / 1024 / 1024} MB 上限`
+          : empty
+            ? "空文件不能上传"
+            : undefined,
         previewUrl: file.type.startsWith("image/") ? URL.createObjectURL(file) : undefined,
       };
     });
     setItems((current) => [...current, ...next]);
     if (inputRef.current) inputRef.current.value = "";
+  };
+
+  const hasFiles = (event: ReactDragEvent<HTMLDivElement>) =>
+    event.dataTransfer?.types.includes("Files") ?? false;
+
+  const handleDragEnter = (event: ReactDragEvent<HTMLDivElement>) => {
+    if (running || !hasFiles(event)) return;
+    event.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragOver = (event: ReactDragEvent<HTMLDivElement>) => {
+    if (running || !hasFiles(event)) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    setDragging(true);
+  };
+
+  const handleDragLeave = (event: ReactDragEvent<HTMLDivElement>) => {
+    if (!hasFiles(event)) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const stillInside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+    if (!stillInside) setDragging(false);
+  };
+
+  const handleDrop = (event: ReactDragEvent<HTMLDivElement>) => {
+    if (!hasFiles(event)) return;
+    event.preventDefault();
+    setDragging(false);
+    if (running) return;
+    const { files, folders } = filesFromDrop(event.dataTransfer);
+    if (folders > 0) {
+      toast.error("暂时不能直接拖文件夹，请打开文件夹后选择里面的文件");
+    }
+    addFiles(files);
   };
 
   const remove = (key: string) => {
@@ -191,7 +288,13 @@ export function Uploader({
   const finished = items.filter((item) => item.status === "done" || item.status === "duplicate").length;
 
   return (
-    <div className="space-y-4">
+    <div
+      className="space-y-4"
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <input
         ref={inputRef}
         type="file"
@@ -207,12 +310,19 @@ export function Uploader({
         className={cn(
           "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-rule-strong bg-surface px-4 text-center transition-colors duration-150 hover:border-brand hover:bg-brand-tint/40",
           compact ? "py-6" : "py-10",
+          dragging && "border-solid border-brand bg-brand-tint/60",
           running && "pointer-events-none opacity-60",
         )}
       >
         <ImagePlus className="size-7 text-brand" aria-hidden />
-        <span className="font-medium text-ink">选择照片或文件</span>
-        <span className="text-sm text-ink-3">可一次多选；手机上可以直接拍照。单个文件不超过 100&nbsp;MB</span>
+        <span className="font-medium text-ink">
+          {dragging ? "松手即可加入上传列表" : "选择照片或文件"}
+        </span>
+        <span className="text-sm text-ink-3">
+          {dragging
+            ? "可以一次拖入多个文件"
+            : "也可以直接把文件拖到这里；手机上可以直接拍照。单个文件不超过 100 MB"}
+        </span>
       </label>
 
       {items.length > 0 ? (

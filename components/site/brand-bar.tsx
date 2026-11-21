@@ -24,7 +24,7 @@ export function Wordmark({ href = "/" }: { href?: string }) {
 
 export function BrandBar({ children, home = "/" }: { children?: ReactNode; home?: string }) {
   return (
-    <header className="sticky top-0 z-30 bg-brand text-white">
+    <header className="sticky top-0 z-30 bg-brand pt-[env(safe-area-inset-top)] text-white">
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Wordmark href={home} />
         {children}

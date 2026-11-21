@@ -19,7 +19,7 @@ const ITEMS = [
 export function AdminNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="管理导航" className="border-b border-rule bg-surface">
+    <nav aria-label="管理导航" className="hidden border-b border-rule bg-surface lg:block">
       <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-2 sm:px-4 [scrollbar-width:none]">
         {ITEMS.map((item) => {
           const active =

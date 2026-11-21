@@ -129,7 +129,7 @@ AI 会先调 `get_context` 和列表工具；上传前用 `scan_folder`；排课
 ## 八、安全边界
 
 - 令牌只放在服务器 `.env` 和本机环境文件，不进 git。
-- 第一版走 SSH 隧道；不要把 `BXX_BASE_URL` 指向公网 HTTP。
+- nginx 已把 `/api/mcp` 限制为服务器本机访问，外部直接请求返回 403；第一版走 SSH 隧道，不要把 `BXX_BASE_URL` 指向公网 HTTP。
 - `upload_files` 只能读 `BXX_UPLOAD_ROOTS` 里的路径。
 - 单文件上限 100 MB，类型按文件内容判断；重复文件按 sha256 跳过。
 - 不提供删除、彻底删除、企业微信推送。

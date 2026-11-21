@@ -50,36 +50,17 @@ systemctl restart banxuexing
 
 撤销某个人：从 `MCP_TOKENS` 里删掉那一段，重启。操作记录会显示对应名字。
 
-## 三、Codex 配置（对方电脑）
+## 三、Codex 一键配置（对方电脑）
 
-完整步骤在 `docs/CODEX_HANDOFF.md`。核心是三步：
+把这一条发给同事，只替换令牌：
 
-1. 下载单文件 MCP（不需要仓库、不需要 npm）：
+```bash
+curl -fsSL http://113.249.117.200:8000/codex-setup.sh | bash -s -- <令牌>
+```
 
-   ```bash
-   mkdir -p ~/.local/share/banxuexing
-   curl -fsSL http://113.249.117.200:8000/banxuexing-mcp.mjs \
-     -o ~/.local/share/banxuexing/banxuexing-mcp.mjs
-   ```
+脚本会自动下载单文件 MCP、写 `~/.config/banxuexing-mcp/env`、把 `banxuexing` 加到 `~/.codex/config.toml`、追加一条“拖文件就上传”的全局说明，并验证连接。
 
-2. 写本机环境文件 `~/.config/banxuexing-mcp/env`（权限 600）：
-
-   ```bash
-   BXX_BASE_URL=http://113.249.117.200:8000
-   BXX_MCP_TOKEN=发来的令牌
-   BXX_UPLOAD_ROOTS=/Users/对方用户名/Desktop:/Users/对方用户名/Downloads
-   ```
-
-3. 加到 Codex：
-
-   ```bash
-   codex mcp remove banxuexing 2>/dev/null || true
-   codex mcp add banxuexing -- /bin/zsh -lc \
-     'set -a; source "$HOME/.config/banxuexing-mcp/env"; set +a; exec node "$HOME/.local/share/banxuexing/banxuexing-mcp.mjs"'
-   codex mcp get banxuexing
-   ```
-
-要求：电脑上有 Node 18+。没有的话，Codex 会先执行 `brew install node`（macOS）。
+要求 Node 18+；没有的话脚本会先 `brew install node`（macOS）。更短的中文交接单见 `docs/CODEX_HANDOFF.md`。
 
 OpenCode 的配置见 `docs/CODEX_HANDOFF.md` 末尾，字段名是 `servers`（旧版是 `mcp`）。
 

@@ -1,99 +1,76 @@
-# 伴学星 MCP：Codex 交接单
+# 伴学星上传：给同事的一句话
 
-给同事发这段提示词，让对方的 Codex 自己配置。对方只需要会打开 Codex、粘贴、点允许。
-
-发送前把三处占位符换掉：
-
-- `<令牌>`：管理员单独发的 64 位令牌
-- `<允许目录>`：例如 `/Users/小王/Desktop:/Users/小王/Downloads`
-- 如果服务器地址变了，替换 `http://113.249.117.200:8000`
-
----
-
-## 复制给 Codex 的提示词
+把下面这段发给同事，只改 `<令牌>`：
 
 ```text
-你是 Codex，请在这台 Mac 上帮我配置“伴学星”MCP。按顺序执行；遇到网络或写文件权限时请允许。
+请运行这条命令，装好后新开一个 Codex 会话：
 
-1. 检查 Node：运行 `node -v`。如果低于 v18 或没有 node，先运行 `brew install node`，再继续。
-2. 下载单文件 MCP：
-   mkdir -p "$HOME/.local/share/banxuexing"
-   curl -fsSL http://113.249.117.200:8000/banxuexing-mcp.mjs -o "$HOME/.local/share/banxuexing/banxuexing-mcp.mjs"
-   下载后确认文件大于 100KB。
-3. 写本机环境文件（不要把令牌打印到对话里）：
-   mkdir -p "$HOME/.config/banxuexing-mcp"
-   chmod 700 "$HOME/.config/banxuexing-mcp"
-   umask 077
-   printf 'BXX_BASE_URL=%s\n' 'http://113.249.117.200:8000' > "$HOME/.config/banxuexing-mcp/env"
-   printf 'BXX_MCP_TOKEN=%s\n' '<令牌>' >> "$HOME/.config/banxuexing-mcp/env"
-   printf 'BXX_UPLOAD_ROOTS=%s\n' '<允许目录>' >> "$HOME/.config/banxuexing-mcp/env"
-   chmod 600 "$HOME/.config/banxuexing-mcp/env"
-4. 备份并配置 Codex：
-   cp "$HOME/.codex/config.toml" "$HOME/.codex/config.toml.bak-$(date +%Y%m%d-%H%M%S)"
-   codex mcp remove banxuexing 2>/dev/null || true
-   往 ~/.codex/config.toml 末尾追加：
+curl -fsSL http://113.249.117.200:8000/codex-setup.sh | bash -s -- <令牌>
 
-   [mcp_servers.banxuexing]
-   command = "/bin/zsh"
-   args = ["-lc", 'set -a; source "$HOME/.config/banxuexing-mcp/env"; set +a; exec node "$HOME/.local/share/banxuexing/banxuexing-mcp.mjs"']
-   startup_timeout_sec = 30.0
-   tool_timeout_sec = 300.0
-
-5. 验证配置和网络：
-   codex mcp get banxuexing
-   set -a; source "$HOME/.config/banxuexing-mcp/env"; set +a
-   curl -fsS -m 10 http://113.249.117.200:8000/api/mcp/context -H "Authorization: Bearer $BXX_MCP_TOKEN" > /tmp/bxx-mcp-check.json
-   node -e "const d=require('/tmp/bxx-mcp-check.json'); console.log('OK', d.data.student.name, d.data.subjects.length)"
-   最后删掉 /tmp/bxx-mcp-check.json。
-
-6. 完成后告诉我：配置成功，并提醒我“新开一个 Codex 会话”再使用。不要输出令牌。
+以后我把文件拖进对话框，说“帮我上传到数学课本”就行。
 ```
 
----
+对方点允许即可。脚本会自动：
 
-## 配置完成后怎么用
+- 检查/安装 Node
+- 下载伴学星 MCP
+- 写本机配置和 Codex MCP 配置
+- 验证令牌能否连上
 
-新开一个 Codex 会话，先说：
+不需要仓库、不需要 npm install、不需要 SSH 隧道、不需要手动改 TOML。
+
+## 装好后怎么用
+
+把文件直接拖进 Codex 对话框，然后说：
 
 ```text
-用 banxuexing 的 get_context 确认能连上，然后告诉我今天有哪些课。
+帮我上传到数学课本
 ```
 
-能返回学生、日期和科目，就说明配置成功。
-
-上传示例：
+科目或资料册没说清楚时，Codex 会先列出来问你。也可以一次拖多个文件，或者说：
 
 ```text
-用 banxuexing 看一下 ~/Desktop/数学第三章 里有哪些文件，先列给我，不要上传。
+帮我传到数学，标题用“数学课本 第三章”，重复的跳过。
 ```
 
-确认文件无误后：
+排课：
 
 ```text
-把这些照片传到数学课本，标题用“数学课本 第三章”。重复的跳过。
+下周给数学排一节课，先给我看时间，确认了再写。
 ```
 
-排课示例：
+## 发令牌
 
-```text
-用 banxuexing 看下周数学有哪些可行时间，先给我看，不要写。确认后我再让你写。
+服务器 `/opt/banxuexing/.env`：
+
+```bash
+MCP_TOKENS=小王:64位令牌,小李:另一个64位令牌
 ```
 
----
+生成令牌：
 
-## 常见问题
+```bash
+openssl rand -hex 32
+```
 
-- **下载 404**：服务器还没发布 `banxuexing-mcp.mjs`，让管理员重新发布。
-- **401**：令牌不对或被撤销，找管理员换一个。
-- **Codex 看不到工具**：`codex mcp get banxuexing` 看配置；确认 `node` 可用；重开 Codex。
-- **只能读取这些目录**：把目录加进 `~/.config/banxuexing-mcp/env` 的 `BXX_UPLOAD_ROOTS`，冒号分隔。
-- **上传很慢/超时**：Codex 的工具超时已设为 300 秒；特别大的文件建议先压缩或分批。
+改完 `systemctl restart banxuexing`。内部人员也可以共用一个令牌，但操作记录里只会显示同一个名字。
 
----
+## 出问题
 
-## 附：OpenCode 配置
+- **命令下载失败**：确认服务器已发布 `codex-setup.sh` 和 `banxuexing-mcp.mjs`。
+- **401**：令牌不对或被撤销，换一个。
+- **Codex 看不到 banxuexing 工具**：重开 Codex；运行 `codex mcp get banxuexing` 检查。
+- **上传时提示只能读取某些目录**：默认允许 `~/Desktop` 和 `~/Downloads`；要加目录，重跑命令并加第二个参数：
 
-如果对方用 OpenCode，把 `~/.config/opencode/opencode.jsonc` 的 `servers` 下加：
+  ```bash
+  curl -fsSL http://113.249.117.200:8000/codex-setup.sh | bash -s -- <令牌> "$HOME/Desktop:$HOME/Downloads:$HOME/Documents"
+  ```
+
+- **Windows**：当前脚本按 macOS 写（`/bin/zsh`、Homebrew）；Windows 需要另做一版。
+
+## 附：OpenCode
+
+如果对方用 OpenCode，不用跑上面的脚本，直接在 `~/.config/opencode/opencode.jsonc` 的 `servers` 下加：
 
 ```jsonc
 "banxuexing": {
@@ -107,4 +84,4 @@
 }
 ```
 
-旧版 OpenCode 的字段叫 `mcp`，内容相同。
+并先按 `docs/MCP.md` 准备 `~/.config/banxuexing-mcp/env` 和单文件 MCP。

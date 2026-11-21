@@ -25,4 +25,6 @@ export SITE_URL=http://127.0.0.1:3300
 export SHARE_TOKEN=e2eShareToken_0123456789
 export ADMIN_PASSCODE=e2e-pass-123
 export SESSION_SECRET=e2e-session-secret-0123456789abcdef0123456789
+export MCP_TOKEN=e2e-mcp-token-0123456789abcdef0123456789
+export MCP_TOKEN_LABEL=e2e-ai
 exec node server.js

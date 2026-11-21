@@ -317,10 +317,11 @@ export function logActivity(entry: {
   entityType: string;
   entityId: string | number;
   summary: string;
+  actor?: string;
 }): void {
   getDb()
     .insert(activity)
-    .values({ ...entry, entityId: String(entry.entityId) })
+    .values({ ...entry, entityId: String(entry.entityId), actor: entry.actor ?? "工作人员" })
     .run();
 }
 

@@ -135,7 +135,14 @@ export default function AdminHome() {
                   <time className="tabular w-28 shrink-0 text-sm text-ink-3">
                     {formatDateTime(entry.at)}
                   </time>
-                  <span className="text-ink-2">{entry.summary}</span>
+                  <span className="flex min-w-0 flex-wrap items-center gap-2 text-ink-2">
+                    {entry.actor !== "工作人员" ? (
+                      <span className="rounded bg-brand-tint px-1.5 py-0.5 text-xs font-medium text-brand">
+                        AI
+                      </span>
+                    ) : null}
+                    <span>{entry.summary}</span>
+                  </span>
                 </li>
               ))}
             </ol>

@@ -1,0 +1,1 @@
+ALTER TABLE `activity` ADD `actor` text DEFAULT '工作人员' NOT NULL;

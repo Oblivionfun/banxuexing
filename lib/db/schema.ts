@@ -147,6 +147,7 @@ export const activity = sqliteTable(
     entityType: text("entity_type").notNull(),
     entityId: text("entity_id").notNull(),
     summary: text("summary").notNull(),
+    actor: text("actor").notNull().default("工作人员"),
   },
   (t) => [index("activity_at").on(t.at)],
 );

@@ -18,6 +18,12 @@ const schema = z.object({
   AI_BASE_URL: optionalString,
   AI_API_KEY: optionalString,
   AI_MODEL: optionalString,
+  // 本地 MCP 的访问令牌；不配置时 /api/mcp 整体关闭
+  MCP_TOKEN: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().min(32, "MCP_TOKEN 至少 32 位").optional(),
+  ),
+  MCP_TOKEN_LABEL: optionalString,
 });
 
 export type Env = z.infer<typeof schema>;

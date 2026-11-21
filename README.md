@@ -23,6 +23,7 @@ npm run dev                   # http://localhost:3000
 | `npm run typecheck` / `npm run lint` / `npm test` | 类型检查、代码检查、单元测试 |
 | `npm run build && npm run test:e2e` | 生产构建，并在独立目录里跑端到端测试 |
 | `npm run db:generate -- --name 描述` | 改了 `lib/db/schema.ts` 后生成迁移 |
+| `npm run mcp` | 启动本地 AI 的 MCP server（需先配 `MCP_TOKEN`，见 `docs/MCP.md`） |
 | `scripts/deploy-server.sh root@服务器IP` | 发布到线上服务器 |
 
 ## 文档
@@ -30,4 +31,5 @@ npm run dev                   # http://localhost:3000
 - [docs/项目约定.md](docs/项目约定.md)：目录分层、功能与代码对照、写法约定（改代码前先读）
 - [docs/功能说明.md](docs/功能说明.md)：各页面能做什么
 - [docs/部署说明.md](docs/部署说明.md)：线上环境、发布、备份与恢复
+- [docs/MCP.md](docs/MCP.md)：本地 AI 接入、工具说明与安全边界
 - [PRODUCT.md](PRODUCT.md)、[DESIGN.md](DESIGN.md)：产品定位与设计系统

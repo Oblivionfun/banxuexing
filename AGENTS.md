@@ -13,6 +13,7 @@ npm run dev        # http://localhost:3000，首次启动自动建表并补种�
 
 - 开发模式可以不建 `.env.local`：默认 `SHARE_TOKEN=devShareToken0123456789`、`ADMIN_PASSCODE=123456`（见 `lib/env.ts`）。生产模式缺 `SHARE_TOKEN` / `ADMIN_PASSCODE` / `SESSION_SECRET` 会直接启动失败。
 - 数据库在 `data/db/app.db`，上传文件也在 `data/` 下；`data/` 已进 `.gitignore`。
+- 本地 AI（MCP）默认关闭；配置 `MCP_TOKEN` 后启用，用法见 [docs/MCP.md](docs/MCP.md)。`npm run mcp` 启动本地 stdio server。
 
 ## 命令
 
@@ -25,8 +26,9 @@ npm run dev        # http://localhost:3000，首次启动自动建表并补种�
 ## 不可违反
 
 - 不做老师专属入口，也不做账号体系；家长和老师共用查看链接。
-- 管理端写操作只放在 `app/admin/*-actions.ts`，按 `requireAdmin` → zod 校验 → 写库 → `logActivity` → `revalidatePath` 的顺序写。新领域新建 `xxx-actions.ts`，不要再往 `actions.ts` 里堆。
-- 读走 `lib/queries.ts`，页面里不写 SQL；`"use server"` 文件只导出 async 函数，共享同步工具放 `lib/`。
+- 可复用的领域写逻辑（上传、建资料册、建课、排课）放在 `lib/services/`；网页入口仍在 `app/admin/*-actions.ts`，按 `requireAdmin` → zod 校验 → 调 service → `revalidatePath` 写。`logActivity` 在 service 里调用，MCP 和网页共用同一层。新领域新建 `xxx-actions.ts`，不要再往 `actions.ts` 里堆。
+- MCP 只能走 `/api/mcp` 的 Bearer 令牌接口，`mcp/` 本地进程不直连数据库；写课必须 `confirm: true`，不提供删除/彻底删除/群推送。
+- 读走 `lib/queries.ts`，页面里不写 SQL；`"use server"` 文件只导出 async 函数，共享同步工具放 `lib/`（含 `lib/mcp/`）。
 - `lib/` 里的纯逻辑（`time`、`lesson`、`group-message`、`summary-parser` 等）不碰数据库，新增或修改时必须配单元测试。
 - 群消息识别、大模型整理的结果只是草稿，写入前必须经过工作人员确认。
 - 颜色、字号只用 `DESIGN.md` 的 token，不写十六进制颜色；批改红只用于老师布置的事。重复出现的界面先查 `components/` 有没有现成的。
@@ -35,7 +37,7 @@ npm run dev        # http://localhost:3000，首次启动自动建表并补种�
 
 ## Next.js 16
 
-- 不要新建 `middleware.ts`：本版本用 `proxy.ts`。`/api/upload` 被刻意排除在 matcher 外，否则请求体会在 10MB 处被截断，上传接口自己校验口令。
+- 不要新建 `middleware.ts`：本版本用 `proxy.ts`。`/api/upload` 和 `/api/mcp` 被刻意排除在 matcher 外：上传请求体会在 10MB 处被截断，这两个接口自己校验（口令 / Bearer 令牌）。
 - 页面全部动态渲染，没有开 `cacheComponents`；不要自己加缓存层。route handler 里的跳转用 `lib/http.ts` 的 `relativeRedirect`（经过 nginx 后 `request.url` 是内网地址）。
 
 <!-- BEGIN:nextjs-agent-rules -->

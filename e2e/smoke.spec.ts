@@ -194,6 +194,93 @@ test.describe("手机底部导航", () => {
   });
 });
 
+test("MCP 接口用令牌上传文件，并在确认后写入课程", async ({ page, request }) => {
+  const headers = { Authorization: "Bearer e2e-mcp-token-0123456789abcdef0123456789" };
+
+  expect((await request.get("/api/mcp/context")).status()).toBe(401);
+
+  const context = await request.get("/api/mcp/context", { headers });
+  expect(context.ok()).toBe(true);
+  const subjects = (await context.json()).data.subjects as { name: string }[];
+  expect(subjects.some((subject) => subject.name === "数学")).toBe(true);
+
+  const created = await request.post("/api/mcp/material-sets", {
+    headers: { ...headers, "content-type": "application/json" },
+    data: { subject: "数学", category: "textbook", title: "MCP 上传测试" },
+  });
+  expect(created.ok()).toBe(true);
+  const setId = (await created.json()).data.id as number;
+
+  const upload = await request.post(`/api/mcp/uploads?setId=${setId}`, {
+    headers: {
+      ...headers,
+      "content-type": "application/octet-stream",
+      "x-file-name": encodeURIComponent("MCP 照片.png"),
+      "x-file-size": String(PNG_A.length),
+    },
+    data: PNG_A,
+  });
+  expect(upload.ok()).toBe(true);
+  expect((await upload.json()).data.duplicate).toBe(false);
+
+  const duplicate = await request.post(`/api/mcp/uploads?setId=${setId}`, {
+    headers: {
+      ...headers,
+      "content-type": "application/octet-stream",
+      "x-file-name": encodeURIComponent("MCP 照片.png"),
+      "x-file-size": String(PNG_A.length),
+    },
+    data: PNG_A,
+  });
+  expect((await duplicate.json()).data.duplicate).toBe(true);
+
+  const unconfirmed = await request.post("/api/mcp/lessons", {
+    headers: { ...headers, "content-type": "application/json" },
+    data: {
+      slots: [{ subject: "数学", date: "2030-01-08", startTime: "09:00", endTime: "10:30" }],
+      confirm: false,
+    },
+  });
+  expect(unconfirmed.status()).toBe(400);
+
+  const lesson = await request.post("/api/mcp/lessons", {
+    headers: { ...headers, "content-type": "application/json" },
+    data: {
+      slots: [{ subject: "数学", date: "2030-01-08", startTime: "09:00", endTime: "10:30" }],
+      confirm: true,
+    },
+  });
+  expect(lesson.ok()).toBe(true);
+  const lessonResult = (await lesson.json()).data;
+  expect(lessonResult.created).toBe(1);
+  const lessonId = lessonResult.ids[0] as number;
+
+  const conflict = await request.post("/api/mcp/lessons", {
+    headers: { ...headers, "content-type": "application/json" },
+    data: {
+      slots: [{ subject: "数学", date: "2030-01-08", startTime: "09:30", endTime: "10:30" }],
+      confirm: true,
+    },
+  });
+  expect(conflict.status()).toBe(409);
+
+  const overlap = await request.post("/api/mcp/lessons", {
+    headers: { ...headers, "content-type": "application/json" },
+    data: {
+      slots: [{ subject: "数学", date: "2030-01-08", startTime: "09:30", endTime: "10:30" }],
+      confirm: true,
+      allowOverlap: true,
+    },
+  });
+  expect((await overlap.json()).data.created).toBe(1);
+
+  await page.goto(SHARE_PATH);
+  await page.goto(`/materials/${setId}`);
+  await expect(page.getByRole("heading", { name: "MCP 上传测试" })).toBeVisible();
+  await page.goto(`/lessons/${lessonId}`);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("数学");
+});
+
 test.describe("手机微信", () => {
   test.use({
     viewport: { width: 390, height: 844 },

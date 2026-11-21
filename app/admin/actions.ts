@@ -9,7 +9,6 @@ import { STUDENT_ID, dataDir, getDb } from "@/lib/db";
 import {
   LESSON_SOURCES,
   LESSON_STATUSES,
-  MATERIAL_CATEGORIES,
   availability,
   files,
   lessons,
@@ -18,13 +17,13 @@ import {
   subjects,
 } from "@/lib/db/schema";
 import { fieldErrorsOf } from "@/lib/form";
-import { materialCategoryLabel } from "@/lib/labels";
 import { getLesson, getMaterialSet, getSubjectById, logActivity } from "@/lib/queries";
+import { createLesson, findOverlap } from "@/lib/services/lessons";
+import { createMaterialSet, materialSetInputSchema } from "@/lib/services/materials";
 import { removeBlob } from "@/lib/storage";
 import { SUBJECT_HUES } from "@/lib/subjects";
 import {
   addDays,
-  formatDateWithWeekday,
   formatMonthDay,
   isDateString,
   isTimeString,
@@ -90,31 +89,6 @@ function readLesson(formData: FormData) {
   });
 }
 
-function findOverlap(
-  date: string,
-  startTime: string,
-  endTime: string,
-  excludeId?: number,
-): { subject: string; startTime: string; endTime: string } | undefined {
-  const sameDay = getDb()
-    .select({
-      id: lessons.id,
-      startTime: lessons.startTime,
-      endTime: lessons.endTime,
-      subject: subjects.name,
-    })
-    .from(lessons)
-    .innerJoin(subjects, eq(lessons.subjectId, subjects.id))
-    .where(and(eq(lessons.date, date), isNull(lessons.deletedAt), ne(lessons.status, "cancelled")))
-    .all();
-  const start = toMinutes(startTime);
-  const end = toMinutes(endTime);
-  return sameDay.find(
-    (row) =>
-      row.id !== excludeId && toMinutes(row.startTime) < end && toMinutes(row.endTime) > start,
-  );
-}
-
 export async function saveLessonAction(
   lessonId: number | null,
   _prev: FormState,
@@ -142,18 +116,7 @@ export async function saveLessonAction(
   const db = getDb();
   let id = lessonId;
   if (id === null) {
-    const inserted = db
-      .insert(lessons)
-      .values({ studentId: STUDENT_ID, ...data })
-      .returning({ id: lessons.id })
-      .get();
-    id = inserted.id;
-    logActivity({
-      action: "lesson.create",
-      entityType: "lesson",
-      entityId: id,
-      summary: `新增课程：${subject.name} ${formatDateWithWeekday(data.date)} ${data.startTime}`,
-    });
+    id = createLesson(data, { allowOverlap: true }).id;
   } else {
     const existing = getLesson(id);
     if (!existing) return { error: "这节课不存在，可能已被删除" };
@@ -257,13 +220,6 @@ export async function copyWeekAction(fromStart: string, toStart: string): Promis
 
 /* ---------------- 资料册 ---------------- */
 
-const materialSetSchema = z.object({
-  subjectId: z.coerce.number().int().positive("请选择科目"),
-  category: z.enum(MATERIAL_CATEGORIES, { message: "请选择类别" }),
-  title: z.string().trim().min(1, "请填写标题").max(80, "标题最多 80 字"),
-  note: z.string().trim().max(1000, "备注最多 1000 字"),
-});
-
 export async function createMaterialSetAction(input: {
   subjectId: number;
   category: string;
@@ -271,23 +227,11 @@ export async function createMaterialSetAction(input: {
   note?: string;
 }): Promise<{ id?: number; error?: string; fieldErrors?: Record<string, string> }> {
   await requireAdmin();
-  const parsed = materialSetSchema.safeParse({ note: "", ...input });
+  const parsed = materialSetInputSchema.safeParse({ note: "", ...input });
   if (!parsed.success) {
     return { error: "请补全资料信息", fieldErrors: fieldErrorsOf(parsed.error) };
   }
-  const subject = getSubjectById(parsed.data.subjectId);
-  if (!subject) return { error: "科目不存在，请刷新页面" };
-  const row = getDb()
-    .insert(materialSets)
-    .values({ studentId: STUDENT_ID, ...parsed.data })
-    .returning({ id: materialSets.id })
-    .get();
-  logActivity({
-    action: "material.create",
-    entityType: "material_set",
-    entityId: row.id,
-    summary: `新建资料册：${subject.name} ${materialCategoryLabel(parsed.data.category)}「${parsed.data.title}」`,
-  });
+  const row = createMaterialSet(parsed.data);
   refreshAll();
   return { id: row.id };
 }
@@ -298,7 +242,7 @@ export async function updateMaterialSetAction(
   formData: FormData,
 ): Promise<FormState> {
   await requireAdmin();
-  const parsed = materialSetSchema.safeParse({
+  const parsed = materialSetInputSchema.safeParse({
     subjectId: text(formData, "subjectId"),
     category: text(formData, "category"),
     title: text(formData, "title"),

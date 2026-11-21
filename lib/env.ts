@@ -24,6 +24,8 @@ const schema = z.object({
     z.string().min(32, "MCP_TOKEN 至少 32 位").optional(),
   ),
   MCP_TOKEN_LABEL: optionalString,
+  // 多人使用：用逗号分隔的「名字:令牌」，名字里不要有逗号或冒号
+  MCP_TOKENS: optionalString,
 });
 
 export type Env = z.infer<typeof schema>;

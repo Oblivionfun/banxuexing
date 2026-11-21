@@ -21,6 +21,7 @@ npm run dev        # http://localhost:3000，首次启动自动建表并补种�
 - 单个单元测试：`npm test -- tests/time.test.ts`。Vitest 只收集 `tests/**/*.test.ts`，并把 `server-only` 换成空模块（`vitest.config.mts`）。
 - 端到端：**必须先 `npm run build`**，`test:e2e` 不会自动构建。它把 `.next/standalone` 复制到仓库外启动（3300 端口、全新的 `test-results/e2e-data`，不动开发数据），本机需要装 Chrome（`channel: "chrome"`），用例串行。单个用例：`npx playwright test e2e/smoke.spec.ts -g "关键词"`。
 - 改表：改 `lib/db/schema.ts` → `npm run db:generate -- --name 描述` → 提交 `drizzle/*.sql` 和 `drizzle/meta`。已有迁移不改不删，新列一律 `notNull().default(...)`。不用手动 migrate：`getDb()` 启动时自动执行迁移（`lib/db/index.ts`）。
+- 给同事的单文件 MCP：`npm run mcp:bundle` 生成 `public/banxuexing-mcp.mjs`（已 gitignore，发布脚本会自动生成）。
 - 发布：先备份线上数据库，再 `scripts/deploy-server.sh root@服务器IP`，细节见 `docs/部署说明.md`。
 
 ## 不可违反

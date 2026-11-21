@@ -62,9 +62,9 @@ export default function SettingsPage() {
           description="给本地 AI 工具用的受控接口，可以查科目、上传资料、生成排课建议。令牌只放在服务器 .env 和本机 MCP 配置里。"
         >
           <p className="text-ink-2">
-            {env.MCP_TOKEN
+            {env.MCP_TOKEN || env.MCP_TOKENS
               ? `已启用${env.MCP_TOKEN_LABEL ? `（${env.MCP_TOKEN_LABEL}）` : ""}。AI 的上传和排课会记在“最近操作”里。`
-              : "未启用。在服务器 .env 配置 MCP_TOKEN 后重启服务。"}
+              : "未启用。在服务器 .env 配置 MCP_TOKEN 或 MCP_TOKENS 后重启服务。"}
           </p>
           <p className="mt-2 text-sm text-ink-3">
             配置和工具说明见 <code>docs/MCP.md</code>。

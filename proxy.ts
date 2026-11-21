@@ -42,6 +42,6 @@ export function proxy(request: NextRequest) {
 // /api/upload 和 /api/mcp 不经过 proxy：上传请求体会被缓冲并在 10MB 处截断，这两个接口自行校验。
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icon.svg|icon|robots.txt|s/|denied|api/health|api/upload|api/mcp).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon.svg|icon|robots.txt|s/|denied|api/health|api/upload|api/mcp|banxuexing-mcp\\.mjs).*)",
   ],
 };

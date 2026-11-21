@@ -32,4 +32,5 @@ npm run dev                   # http://localhost:3000
 - [docs/功能说明.md](docs/功能说明.md)：各页面能做什么
 - [docs/部署说明.md](docs/部署说明.md)：线上环境、发布、备份与恢复
 - [docs/MCP.md](docs/MCP.md)：本地 AI 接入、工具说明与安全边界
+- [docs/CODEX_HANDOFF.md](docs/CODEX_HANDOFF.md)：发给同事的 Codex 安装交接单
 - [PRODUCT.md](PRODUCT.md)、[DESIGN.md](DESIGN.md)：产品定位与设计系统

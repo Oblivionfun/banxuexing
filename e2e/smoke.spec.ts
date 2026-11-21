@@ -197,6 +197,10 @@ test.describe("手机底部导航", () => {
 test("MCP 接口用令牌上传文件，并在确认后写入课程", async ({ page, request }) => {
   const headers = { Authorization: "Bearer e2e-mcp-token-0123456789abcdef0123456789" };
 
+  const bundle = await request.get("/banxuexing-mcp.mjs");
+  expect(bundle.ok()).toBe(true);
+  expect((await bundle.body()).byteLength).toBeGreaterThan(100_000);
+
   expect((await request.get("/api/mcp/context")).status()).toBe(401);
 
   const context = await request.get("/api/mcp/context", { headers });

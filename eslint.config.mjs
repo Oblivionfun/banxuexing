@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 由 npm run mcp:bundle 生成，不检查打包产物
+    "public/banxuexing-mcp.mjs",
   ]),
 ]);
 

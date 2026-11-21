@@ -11,6 +11,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "mcp": "tsx mcp/index.ts",
+    "mcp:bundle": "esbuild mcp/index.ts --bundle --platform=node --format=esm --outfile=public/banxuexing-mcp.mjs",
+    "prebuild": "npm run mcp:bundle",
     "db:generate": "drizzle-kit generate",
     "backup": "node scripts/backup.mjs"
   },
@@ -51,6 +53,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.11",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",

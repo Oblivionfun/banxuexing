@@ -61,6 +61,7 @@ fi
 echo "==> 安装依赖并构建"
 cd "$base/src"
 npm ci --no-audit --no-fund --loglevel=error
+npm run mcp:bundle
 NEXT_TELEMETRY_DISABLED=1 npx next build
 
 echo "==> 切换到新版本"
@@ -107,22 +108,6 @@ server {
     client_max_body_size 120m;
     # 上传直接流给应用，不在 nginx 临时目录里落盘
     proxy_request_buffering off;
-
-    # MCP 只允许服务器本机访问：本机 AI 走 SSH 隧道，不把令牌暴露在公网 HTTP
-    location ^~ /api/mcp {
-        allow 127.0.0.1;
-        allow ::1;
-        deny all;
-        proxy_pass http://127.0.0.1:$app_port;
-        proxy_http_version 1.1;
-        proxy_set_header Host \$http_host;
-        proxy_set_header X-Forwarded-Host \$http_host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_read_timeout 600s;
-        proxy_send_timeout 600s;
-    }
 
     location / {
         proxy_pass http://127.0.0.1:$app_port;

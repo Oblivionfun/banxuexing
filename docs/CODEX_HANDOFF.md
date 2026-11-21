@@ -66,7 +66,17 @@ openssl rand -hex 32
   curl -fsSL http://113.249.117.200:8000/codex-setup.sh | bash -s -- <令牌> "$HOME/Desktop:$HOME/Downloads:$HOME/Documents"
   ```
 
-- **Windows**：当前脚本按 macOS 写（`/bin/zsh`、Homebrew）；Windows 需要另做一版。
+- **Windows**：用 PowerShell 版本（见下）。
+
+## Windows 同事
+
+发这一条，粘贴到 PowerShell 或 Codex：
+
+```powershell
+irm http://113.249.117.200:8000/codex-setup.ps1 | iex
+```
+
+按提示粘贴令牌；允许目录直接回车就用 `桌面;下载`。脚本会自动装 Node（winget）、下载 MCP、写 `%USERPROFILE%\.codex\config.toml`，并验证连接。装好后同样是新开 Codex，把文件拖进去说“帮我上传到数学课本”。
 
 ## 附：OpenCode
 

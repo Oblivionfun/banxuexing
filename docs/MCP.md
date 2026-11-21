@@ -58,9 +58,15 @@ systemctl restart banxuexing
 curl -fsSL http://113.249.117.200:8000/codex-setup.sh | bash -s -- <令牌>
 ```
 
-脚本会自动下载单文件 MCP、写 `~/.config/banxuexing-mcp/env`、把 `banxuexing` 加到 `~/.codex/config.toml`、追加一条“拖文件就上传”的全局说明，并验证连接。
+Windows 同事用 PowerShell：
 
-要求 Node 18+；没有的话脚本会先 `brew install node`（macOS）。更短的中文交接单见 `docs/CODEX_HANDOFF.md`。
+```powershell
+irm http://113.249.117.200:8000/codex-setup.ps1 | iex
+```
+
+脚本会自动下载单文件 MCP、写 `~/.config/banxuexing-mcp/env`（Windows 写进 Codex 的 `env` 表）、把 `banxuexing` 加到 `~/.codex/config.toml`、追加一条“拖文件就上传”的全局说明，并验证连接。
+
+要求 Node 18+；没有的话脚本会先 `brew install node`（macOS）或 `winget`（Windows）。更短的中文交接单见 `docs/CODEX_HANDOFF.md`。
 
 OpenCode 的配置见 `docs/CODEX_HANDOFF.md` 末尾，字段名是 `servers`（旧版是 `mcp`）。
 
